@@ -1,0 +1,11 @@
+{
+	"cSpell.words": [
+		"trpc"
+	],
+	"eslint.workingDirectories": [
+		{
+			"pattern": "./app/"
+		}
+	],
+	"dotenv.enableAutocloaking": true
+}

@@ -9,5 +9,5 @@
 			"pattern": "./app/"
 		}
 	],
-	"dotenv.enableAutocloaking": true
+	"dotenv.enableAutocloaking": false
 }

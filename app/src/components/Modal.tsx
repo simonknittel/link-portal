@@ -1,26 +1,29 @@
+"use client";
+
 import clsx from "clsx";
 import type { ReactNode } from "react";
 
 interface Props {
+  className?: string;
   isOpen?: boolean | null;
   onRequestClose?: () => void;
   children?: ReactNode;
-  className?: string;
 }
 
 export default function Modal({
+  className,
   isOpen = false,
   children,
-  className,
   onRequestClose,
 }: Props) {
   if (!isOpen) return null;
 
   return (
-    <section
-      className={
+    <form
+      className={clsx(
+        className,
         "fixed inset-0 flex cursor-pointer items-center justify-center bg-slate-900 bg-opacity-80 p-2 backdrop-blur"
-      }
+      )}
       onClick={onRequestClose}
     >
       <div
@@ -32,6 +35,6 @@ export default function Modal({
       >
         {children}
       </div>
-    </section>
+    </form>
   );
 }

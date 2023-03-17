@@ -20,5 +20,15 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  experimental: {
+    appDir: true,
+  },
+
+  images: {
+    domains: [
+      'via.placeholder.com'
+    ]
+  }
 };
 export default config;

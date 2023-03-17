@@ -1,13 +1,15 @@
 {
-	"cSpell.words": [
-		"clsx",
-		"Snyk",
-		"trpc"
-	],
-	"eslint.workingDirectories": [
-		{
-			"pattern": "./app/"
-		}
-	],
-	"dotenv.enableAutocloaking": false
+  "cSpell.words": [
+    "clsx",
+    "Snyk",
+    "trpc"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "pattern": "./app/"
+    }
+  ],
+  "dotenv.enableAutocloaking": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

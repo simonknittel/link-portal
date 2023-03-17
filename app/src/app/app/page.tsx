@@ -1,37 +1,20 @@
-import { type GetServerSideProps, type NextPage } from "next";
-import Head from "next/head";
-import { useState } from "react";
+import { type Metadata } from "next";
 import {
-  FaChartLine,
-  FaRegPlusSquare,
-  FaRegUser,
-  FaSearch,
   FaStar,
+  FaRegUser,
+  FaRegPlusSquare,
+  FaChartLine,
 } from "react-icons/fa";
-import Button from "~/components/Button";
 import DashboardItem from "~/components/DashboardItem";
-import Modal from "~/components/Modal";
+import DashboardSearch from "~/components/DashboardSearch";
+import NewSharedLinkModal from "~/components/NewSharedLinkModal";
 import DASHBOARD_ITEMS from "~/dashboard-items";
-import { getServerAuthSession } from "~/server/auth";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
+export const metadata: Metadata = {
+  title: "Dashboard | Login Portal",
 };
 
-const Page: NextPage = () => {
+export default function Page() {
   const tagSet = new Set<string>();
 
   DASHBOARD_ITEMS.forEach((item) => {
@@ -48,16 +31,8 @@ const Page: NextPage = () => {
     ),
   }));
 
-  const [showNewSharedLinkModal, setShowNewSharedLinkModal] = useState(false);
-
   return (
     <>
-      <Head>
-        <title>Dashboard</title>
-        <meta name="description" content="Dashboard" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div className="min-h-screen flex-col items-center justify-center bg-slate-900 bg-gradient-to-b text-white">
         <header className="pb-8">
           <h1 className="py-4 text-center text-xl">Dashboard</h1>
@@ -67,18 +42,7 @@ const Page: NextPage = () => {
             Logout
           </Button> */}
 
-          <form className="mx-auto flex w-full max-w-2xl">
-            <input
-              type="search"
-              placeholder="Search"
-              className="h-11 w-full rounded-l bg-slate-700 px-4"
-              autoFocus
-            />
-
-            <Button title="Search" className="rounded-l-none">
-              <FaSearch />
-            </Button>
-          </form>
+          <DashboardSearch />
         </header>
 
         <main className="container mx-auto">
@@ -153,7 +117,7 @@ const Page: NextPage = () => {
               title="Add shared link"
               type="button"
               className="rounded p-2 text-xl text-sky-400 hover:bg-slate-800"
-              onClick={() => setShowNewSharedLinkModal(true)}
+              // onClick={() => setShowNewSharedLinkModal(true)}
             >
               <FaRegPlusSquare />
             </button>
@@ -184,16 +148,8 @@ const Page: NextPage = () => {
           </p>
         </footer>
 
-        <Modal
-          isOpen={showNewSharedLinkModal}
-          onRequestClose={() => setShowNewSharedLinkModal(false)}
-          className="w-[480px]"
-        >
-          <h2 className="text-xl font-bold">Add new shared link</h2>
-        </Modal>
+        <NewSharedLinkModal />
       </div>
     </>
   );
-};
-
-export default Page;
+}

@@ -8,7 +8,7 @@ interface Props {
 export default function RootLayout({ children }: Props) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-900 text-white">{children}</body>
+      <body className="min-h-screen bg-slate-800 text-white">{children}</body>
     </html>
   );
 }

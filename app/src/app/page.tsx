@@ -5,7 +5,7 @@ import LoginButton from "~/components/LoginButton";
 import { authOptions } from "~/server/auth";
 
 export const metadata: Metadata = {
-  title: "Login | Login Portal",
+  title: "Login | Link Portal",
 };
 
 export default async function Page() {
@@ -19,7 +19,7 @@ export default async function Page() {
       <main className="mx-auto w-full max-w-md py-8">
         <h1 className="mb-10 text-center text-6xl">Dashboard</h1>
 
-        <div className="rounded bg-slate-800 p-8">
+        <div className="rounded bg-slate-700 p-8">
           <LoginButton />
         </div>
       </main>

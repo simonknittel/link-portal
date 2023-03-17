@@ -23,7 +23,7 @@ const FavouriteButton = ({ isFavourite, title }: Props) => {
           : `Add ${title} to your favourites`
       }
       className={clsx({
-        "rounded p-2 hover:bg-slate-600": true,
+        "rounded p-2 hover:bg-slate-500": true,
         "text-amber-400": isFavourite,
         "text-sky-400": !isFavourite,
       })}

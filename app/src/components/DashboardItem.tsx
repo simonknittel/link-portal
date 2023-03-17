@@ -14,7 +14,7 @@ const DashboardItem = ({ title, description, href, isFavourite }: Props) => {
     <li>
       <a
         href={href}
-        className="flex gap-4 rounded bg-slate-800 p-4 hover:bg-slate-700"
+        className="flex h-full gap-4 rounded bg-slate-700 p-4 hover:bg-slate-600"
       >
         <span className="block overflow-hidden rounded">
           <Image

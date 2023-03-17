@@ -5,11 +5,11 @@ import Button from "./Button";
 
 const DashboardSearch = () => {
   return (
-    <form className="mx-auto flex w-full max-w-2xl">
+    <form className="flex">
       <input
         type="search"
         placeholder="Search"
-        className="h-11 w-full rounded-l bg-slate-700 px-4"
+        className="h-11 w-full rounded-l bg-slate-600 px-4"
         autoFocus
       />
 

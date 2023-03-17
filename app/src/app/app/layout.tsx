@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { type ReactNode } from "react";
+import Sidebar from "~/components/Sidebar";
 import { authOptions } from "~/server/auth";
 
 interface Props {
@@ -14,10 +15,12 @@ export default async function AppLayout({ children }: Props) {
   }
 
   return (
-    <div>
-      <div>Sidebar</div>
+    <div className="flex min-h-screen">
+      <div className="w-96 bg-slate-900">
+        <Sidebar />
+      </div>
 
-      <div>{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import type { ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 interface Props {
   className?: string;
@@ -18,12 +19,9 @@ export default function Modal({
 }: Props) {
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <form
-      className={clsx(
-        className,
-        "fixed inset-0 flex cursor-pointer items-center justify-center bg-slate-900 bg-opacity-80 p-2 backdrop-blur"
-      )}
+      className="fixed inset-0 flex cursor-pointer items-center justify-center bg-slate-900 bg-opacity-80 p-2 backdrop-blur"
       onClick={onRequestClose}
     >
       <div
@@ -35,6 +33,7 @@ export default function Modal({
       >
         {children}
       </div>
-    </form>
+    </form>,
+    document.body
   );
 }

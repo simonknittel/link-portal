@@ -1,8 +1,10 @@
 "use client";
 
 import { init } from "@paralleldrive/cuid2";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaSave } from "react-icons/fa";
+import { FaSave, FaSpinner } from "react-icons/fa";
 import slugify from "slugify";
 import Button from "./Button";
 import Modal from "./Modal";
@@ -13,16 +15,28 @@ interface Props {
 }
 
 const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
-  // const createMutation = api.team.create.useMutation();
+  const router = useRouter();
   const { register, handleSubmit, watch, setValue } = useForm();
+  const [isCreating, setIsCreating] = useState(false);
 
   const onSubmit = async (data) => {
-    // const createdTeam = await createMutation.mutateAsync({
-    //   name: data.name,
-    //   slug: data.slug,
-    // });
+    setIsCreating(true);
 
-    console.log("createdTeam", createdTeam);
+    try {
+      const response = await fetch("/api/teams", {
+        method: "POST",
+        body: JSON.stringify({
+          name: data.name,
+          slug: data.slug,
+        }),
+      });
+
+      const createdTeam = await response.json();
+
+      router.push(`/app/team/${createdTeam.slug}`);
+    } catch (error) {
+      setIsCreating(false);
+    }
   };
 
   watch((data, { name }) => {
@@ -65,8 +79,8 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
         />
 
         <div className="flex justify-end mt-4">
-          <Button type="submit">
-            <FaSave />
+          <Button type="submit" disabled={isCreating}>
+            {isCreating ? <FaSpinner className="animate-spin" /> : <FaSave />}
             Create
           </Button>
         </div>

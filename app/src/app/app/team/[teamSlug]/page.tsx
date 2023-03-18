@@ -10,7 +10,7 @@ import DashboardItem from "~/components/DashboardItem";
 import DashboardSearch from "~/components/DashboardSearch";
 import NewSharedLinkModalButton from "~/components/NewSharedLinkModalButton";
 import DASHBOARD_ITEMS from "~/dashboard-items";
-import { getTeamBySlug } from "~/services/team";
+import { getTeamBySlug } from "~/server/services/team";
 
 interface Params {
   teamSlug: string;

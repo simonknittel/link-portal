@@ -1,4 +1,4 @@
-import { getAllTeams } from "~/services/team";
+import { getAllTeams } from "~/server/services/team";
 import Avatar from "./Avatar";
 import TeamSelectorFlyout from "./TeamSelectorFlyout";
 

@@ -6,9 +6,12 @@ import { authOptions } from "~/server/auth";
 
 interface Props {
   children: ReactNode;
+  params: {
+    teamSlug: string;
+  };
 }
 
-export default async function AppLayout({ children }: Props) {
+export default async function AppLayout({ children, params }: Props) {
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/");
@@ -17,7 +20,7 @@ export default async function AppLayout({ children }: Props) {
   return (
     <div className="min-h-screen">
       <div className="fixed h-screen w-96 overflow-auto bg-slate-900">
-        <Sidebar />
+        <Sidebar teamSlug={params.teamSlug} />
       </div>
 
       <div className="ml-96">{children}</div>

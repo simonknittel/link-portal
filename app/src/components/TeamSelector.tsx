@@ -1,22 +1,28 @@
-import { getTeamBySlug } from "~/services/team";
+import { getAllTeams } from "~/services/team";
 import Avatar from "./Avatar";
+import TeamSelectorFlyout from "./TeamSelectorFlyout";
 
 interface Props {
-  teamSlug: string;
+  teamSlug?: string;
 }
 
 const TeamSelector = ({ teamSlug }: Props) => {
-  const team = getTeamBySlug(teamSlug)!;
+  const teams = getAllTeams();
+  const selectedTeam = teams.find((team) => team.slug === teamSlug);
 
   return (
-    <div className="flex items-center justify-between border-b-2 border-slate-800 px-8 py-4">
+    <div className="flex items-center justify-between border-b-2 border-slate-800 px-8 py-4 relative">
       <div className="flex items-center gap-4">
         <div className="overflow-hidden rounded">
-          <Avatar name={team.name} />
+          <Avatar name={selectedTeam?.name} />
         </div>
 
-        <p className="text-xl font-bold">{team.name}</p>
+        <p className="text-xl font-bold">
+          {selectedTeam ? selectedTeam.name : "Select a team"}
+        </p>
       </div>
+
+      <TeamSelectorFlyout teams={teams} />
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 import {
-  FaStar,
-  FaRegUser,
-  FaRegPlusSquare,
   FaChartLine,
+  FaRegPlusSquare,
+  FaRegUser,
+  FaStar,
 } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
 import DashboardSearch from "~/components/DashboardSearch";
@@ -24,7 +25,14 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   };
 }
 
-export default function Page() {
+interface Props {
+  params: Params;
+}
+
+export default function Page({ params }: Props) {
+  const team = getTeamBySlug(params.teamSlug);
+  if (!team) notFound();
+
   const tagSet = new Set<string>();
 
   DASHBOARD_ITEMS.forEach((item) => {

@@ -1,16 +1,18 @@
-export function getTeamBySlug(slug = "teamSlug") {
-  const teams = [
-    {
-      name: "Personal",
-      slug: "teamSlug",
-    },
-    {
-      name: "Team A",
-      slug: "team-a-12345",
-    },
-  ];
+const teams = [
+  {
+    name: "Personal",
+    slug: "simonknittel-12345",
+  },
+  {
+    name: "Team A",
+    slug: "team-a-12345",
+  },
+];
 
-  const team = teams.find((team) => team.slug === slug);
+export function getTeamBySlug(slug: string) {
+  return teams.find((team) => team.slug === slug);
+}
 
-  return team;
+export function getAllTeams() {
+  return teams;
 }

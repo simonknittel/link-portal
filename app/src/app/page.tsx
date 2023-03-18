@@ -16,7 +16,7 @@ export default async function Page() {
 
   return (
     <div className="flex justify-center">
-      <main className="mx-auto w-full max-w-md py-8">
+      <main className="w-full max-w-md py-8">
         <h1 className="mb-10 text-center text-6xl">Link Portal</h1>
 
         <div className="flex flex-col gap-2 rounded bg-slate-700 p-8">

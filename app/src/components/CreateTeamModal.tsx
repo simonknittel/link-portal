@@ -13,10 +13,16 @@ interface Props {
 }
 
 const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
+  // const createMutation = api.team.create.useMutation();
   const { register, handleSubmit, watch, setValue } = useForm();
 
-  const onSubmit = () => {
-    console.log("onSubmit()");
+  const onSubmit = async (data) => {
+    // const createdTeam = await createMutation.mutateAsync({
+    //   name: data.name,
+    //   slug: data.slug,
+    // });
+
+    console.log("createdTeam", createdTeam);
   };
 
   watch((data, { name }) => {

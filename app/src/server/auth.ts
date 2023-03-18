@@ -1,11 +1,13 @@
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { init } from "@paralleldrive/cuid2";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type NextAuthOptions,
   type DefaultSession,
+  type NextAuthOptions,
 } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import slugify from "slugify";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
@@ -19,12 +21,12 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: 0 | 1 | 2;
+      // role: 0 | 1 | 2;
     } & DefaultSession["user"];
   }
 
   interface User {
-    role: 0 | 1 | 2;
+    // role: 0 | 1 | 2;
   }
 }
 
@@ -34,11 +36,12 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  // TODO: Create personal team on user creation
   callbacks: {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        session.user.role = user.role;
+        // session.user.role = user.role;
       }
       return session;
     },
@@ -50,6 +53,34 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GITHUB_SECRET,
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      const slugifiedName = slugify(user.name, {
+        lower: true,
+        strict: true,
+      });
+
+      const createId = init({
+        length: 10,
+      });
+      const slugWithCuid = slugifiedName + "-" + createId();
+
+      const createdTeam = await prisma.team.create({
+        data: {
+          name: "Personal",
+          slug: slugWithCuid,
+        },
+      });
+
+      await prisma.teamMember.create({
+        data: {
+          teamId: createdTeam.id,
+          userId: user.id,
+          role: 2,
+        },
+      });
+    },
+  },
 };
 
 /**

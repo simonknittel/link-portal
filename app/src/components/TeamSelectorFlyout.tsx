@@ -1,5 +1,6 @@
 "use client";
 
+import { type Team } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,7 +10,7 @@ import Button from "./Button";
 import CreateTeamModal from "./CreateTeamModal";
 
 interface Props {
-  teams: [];
+  teams: Team[];
 }
 
 const TeamSelectorFlyout = ({ teams }: Props) => {

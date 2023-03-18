@@ -6,8 +6,8 @@ interface Props {
   teamSlug?: string;
 }
 
-const TeamSelector = ({ teamSlug }: Props) => {
-  const teams = getAllTeams();
+const TeamSelector = async ({ teamSlug }: Props) => {
+  const teams = await getAllTeams();
   const selectedTeam = teams.find((team) => team.slug === teamSlug);
 
   return (

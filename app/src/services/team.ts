@@ -1,18 +1,13 @@
-const teams = [
-  {
-    name: "Personal",
-    slug: "simon-knittel-12345",
-  },
-  {
-    name: "Team A",
-    slug: "team-a-12345",
-  },
-];
+import { prisma } from "~/server/db";
 
 export function getTeamBySlug(slug: string) {
-  return teams.find((team) => team.slug === slug);
+  return prisma.team.findUnique({
+    where: {
+      slug,
+    },
+  });
 }
 
 export function getAllTeams() {
-  return teams;
+  return prisma.team.findMany();
 }

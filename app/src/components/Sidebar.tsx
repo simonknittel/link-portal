@@ -7,7 +7,7 @@ interface Props {
   teamSlug?: string;
 }
 
-const Sidebar = async ({ teamSlug }: Props) => {
+const Sidebar = ({ teamSlug }: Props) => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>

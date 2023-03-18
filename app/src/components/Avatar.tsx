@@ -33,7 +33,7 @@ const Avatar = ({ className, name, image, size }: Props) => {
       {image ? (
         <Image
           src={image}
-          alt={`Image of ${name}`}
+          alt={name ? `Image of ${name}` : ""}
           width={size || 64}
           height={size || 64}
         />

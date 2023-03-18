@@ -12,7 +12,9 @@ export default function Page() {
         <Sidebar />
       </div>
 
-      <div className="ml-96 min-h-screen">Teams</div>
+      <main className="ml-96 min-h-screen p-8">
+        <h1 className="font-bold text-2xl">Your teams</h1>
+      </main>
     </div>
   );
 }

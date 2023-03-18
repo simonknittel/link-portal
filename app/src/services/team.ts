@@ -1,7 +1,7 @@
 const teams = [
   {
     name: "Personal",
-    slug: "simonknittel-12345",
+    slug: "simon-knittel-12345",
   },
   {
     name: "Team A",

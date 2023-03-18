@@ -6,13 +6,15 @@ import { useState } from "react";
 import { FaChevronDown, FaRegPlusSquare } from "react-icons/fa";
 import Avatar from "./Avatar";
 import Button from "./Button";
+import CreateTeamModal from "./CreateTeamModal";
 
 interface Props {
   teams: [];
 }
 
 const TeamSelectorFlyout = ({ teams }: Props) => {
-  const [isActive, setIsActive] = useState(false);
+  const [flyoutIsOpen, setFlyoutIsOpen] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   return (
     <>
@@ -20,7 +22,7 @@ const TeamSelectorFlyout = ({ teams }: Props) => {
         variant="secondary"
         title="Open team selection"
         iconOnly={true}
-        onClick={() => setIsActive((value) => !value)}
+        onClick={() => setFlyoutIsOpen((value) => !value)}
       >
         <FaChevronDown />
       </Button>
@@ -29,7 +31,7 @@ const TeamSelectorFlyout = ({ teams }: Props) => {
         className={clsx({
           "absolute left-4 right-4 top-full rounded-b bg-slate-800 overflow-hidden p-4":
             true,
-          hidden: isActive === false,
+          hidden: flyoutIsOpen === false,
         })}
       >
         <ul>
@@ -48,15 +50,20 @@ const TeamSelectorFlyout = ({ teams }: Props) => {
             ))}
 
           <li>
-            <Link
-              href={`/app`}
-              className="p-4 flex gap-2 items-center hover:bg-slate-700 text-slate-500 rounded"
+            <button
+              className="p-4 flex gap-2 items-center hover:bg-slate-700 text-slate-500 rounded w-full"
+              onClick={() => setModalIsOpen(true)}
             >
               <FaRegPlusSquare /> Create new team
-            </Link>
+            </button>
           </li>
         </ul>
       </div>
+
+      <CreateTeamModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+      />
     </>
   );
 };

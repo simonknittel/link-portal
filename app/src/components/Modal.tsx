@@ -20,7 +20,7 @@ export default function Modal({
   if (!isOpen) return null;
 
   return createPortal(
-    <form
+    <div
       className="fixed inset-0 flex cursor-pointer items-center justify-center bg-slate-900 bg-opacity-80 p-2 backdrop-blur"
       onClick={onRequestClose}
     >
@@ -33,7 +33,7 @@ export default function Modal({
       >
         {children}
       </div>
-    </form>,
+    </div>,
     document.body
   );
 }

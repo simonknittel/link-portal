@@ -16,8 +16,12 @@ interface Params {
   teamSlug: string;
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
-  const team = getTeamBySlug(params.teamSlug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Params;
+}): Promise<Metadata> {
+  const team = await getTeamBySlug(params.teamSlug);
   if (!team) return {};
 
   return {
@@ -29,8 +33,8 @@ interface Props {
   params: Params;
 }
 
-export default function Page({ params }: Props) {
-  const team = getTeamBySlug(params.teamSlug);
+export default async function Page({ params }: Props) {
+  const team = await getTeamBySlug(params.teamSlug);
   if (!team) notFound();
 
   const tagSet = new Set<string>();

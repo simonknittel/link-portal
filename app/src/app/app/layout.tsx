@@ -15,12 +15,12 @@ export default async function AppLayout({ children }: Props) {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <div className="w-96 bg-slate-900">
+    <div className="min-h-screen">
+      <div className="fixed h-screen w-96 overflow-auto bg-slate-900">
         <Sidebar />
       </div>
 
-      <div className="flex-1">{children}</div>
+      <div className="ml-96">{children}</div>
     </div>
   );
 }

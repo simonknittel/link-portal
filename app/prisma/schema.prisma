@@ -18,6 +18,8 @@ model Link {
     href             String
     tags             Tag[]
     LinkUserKeyValue LinkUserKeyValue[]
+    teamId           String
+    team             Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 model Tag {
@@ -25,6 +27,8 @@ model Tag {
     title       String
     description String? // @db.Text
     links       Link[]
+    teamId      String
+    team        Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 model LinkUserKeyValue {
@@ -37,6 +41,26 @@ model LinkUserKeyValue {
     updated DateTime @updatedAt
 
     @@id([linkId, userId, key])
+}
+
+model Team {
+    id          String       @id @default(cuid())
+    name        String
+    slug        String       @unique
+    links       Link[]
+    tags        Tag[]
+    teamMembers TeamMember[]
+    image       String?
+}
+
+model TeamMember {
+    teamId String
+    team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role   Int    @default(1) // 1 = Member, 2 = Admin
+
+    @@id([teamId, userId])
 }
 
 // Necessary for Next auth
@@ -75,7 +99,7 @@ model User {
     accounts         Account[]
     sessions         Session[]
     LinkUserKeyValue LinkUserKeyValue[]
-    role             Int                @default(0) // 0 = Guest, 1 = Member, 2 = Admin
+    teams            TeamMember[]
 }
 
 model VerificationToken {

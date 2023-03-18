@@ -44,7 +44,7 @@ export default function Page() {
             Your favourites
           </h3>
 
-          <ul className="grid grid-cols-3 gap-2">
+          <ul className="grid grid-cols-4 gap-2">
             <DashboardItem
               href="https://mail.google.com/mail/u/?authuser=hallo@simonknittel.de"
               title="Gmail"
@@ -74,7 +74,7 @@ export default function Page() {
             </button>
           </div>
 
-          {/* <ul className="grid grid-cols-3 gap-2"></ul> */}
+          {/* <ul className="grid grid-cols-4 gap-2"></ul> */}
 
           <p className="italic text-slate-500">
             You don&apos;t have any custom links.
@@ -87,7 +87,7 @@ export default function Page() {
             Most common
           </h3>
 
-          <ul className="grid grid-cols-3 gap-2">
+          <ul className="grid grid-cols-4 gap-2">
             <DashboardItem
               href="https://mail.google.com/mail/u/?authuser=hallo@simonknittel.de"
               title="Gmail"
@@ -112,7 +112,7 @@ export default function Page() {
           <section key={section.title} className="mt-8">
             <h3 className="mb-4 text-xl font-bold">{section.title}</h3>
 
-            <ul className="grid grid-cols-3 gap-2">
+            <ul className="grid grid-cols-4 gap-2">
               {section.items.map((item) => (
                 <DashboardItem key={item.title} {...item} />
               ))}

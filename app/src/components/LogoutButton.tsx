@@ -6,9 +6,13 @@ import Button from "./Button";
 
 const LogoutButton = () => {
   return (
-    <Button onClick={() => signOut()} variant="secondary">
+    <Button
+      onClick={() => signOut()}
+      variant="secondary"
+      title="Logout"
+      iconOnly={true}
+    >
       <FaSignOutAlt />
-      Logout
     </Button>
   );
 };

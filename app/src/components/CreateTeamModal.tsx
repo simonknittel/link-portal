@@ -1,9 +1,10 @@
 "use client";
 
 import { init } from "@paralleldrive/cuid2";
+import { type Team } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { FaSave, FaSpinner } from "react-icons/fa";
 import slugify from "slugify";
 import Button from "./Button";
@@ -14,12 +15,17 @@ interface Props {
   onRequestClose: () => void;
 }
 
+interface FormValues {
+  name: string;
+  slug: string;
+}
+
 const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
   const router = useRouter();
-  const { register, handleSubmit, watch, setValue } = useForm();
+  const { register, handleSubmit, watch, setValue } = useForm<FormValues>();
   const [isCreating, setIsCreating] = useState(false);
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsCreating(true);
 
     try {
@@ -31,7 +37,7 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
         }),
       });
 
-      const createdTeam = await response.json();
+      const createdTeam = (await response.json()) as Team;
 
       router.push(`/app/team/${createdTeam.slug}`);
     } catch (error) {
@@ -40,7 +46,7 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
   };
 
   watch((data, { name }) => {
-    if (name !== "name") return;
+    if (name !== "name" || !data["name"]) return;
 
     const slugifiedName = slugify(data["name"], {
       lower: true,
@@ -63,7 +69,7 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
     >
       <h2 className="text-xl font-bold">Create new team</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={() => void handleSubmit(onSubmit)}>
         <label className="mt-4 block">Name</label>
         <input
           className="h-11 w-full rounded bg-slate-600 px-4"

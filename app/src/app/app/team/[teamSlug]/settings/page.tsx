@@ -7,8 +7,12 @@ interface Params {
   teamSlug: string;
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
-  const team = getTeamBySlug(params.teamSlug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Params;
+}): Promise<Metadata> {
+  const team = await getTeamBySlug(params.teamSlug);
   if (!team) return {};
 
   return {
@@ -29,7 +33,9 @@ export default async function Page({ params }: Props) {
       <h1 className="font-bold text-2xl">Team settings</h1>
 
       <section className="p-8 bg-red-900 rounded bg-opacity-25 max-w-4xl mt-4">
-        <h2 className="font-bold text-2xl text-red-600">Danger zone</h2>
+        <h2 className="font-bold text-2xl text-red-500">Danger zone</h2>
+
+        <p className="mt-4">Delete the team and all links of this team.</p>
 
         <DeleteTeamButton team={team} />
       </section>

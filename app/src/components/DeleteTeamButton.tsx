@@ -43,7 +43,12 @@ const DeleteTeamButton = ({ team }: Props) => {
   };
 
   return (
-    <Button onClick={handleClick} className="mt-4" disabled={isDeleting}>
+    <Button
+      onClick={() => void handleClick()}
+      className="mt-6"
+      disabled={isDeleting}
+      colorScheme="red"
+    >
       {isDeleting ? <FaSpinner className="animate-spin" /> : <FaTrash />}
       Delete team
     </Button>

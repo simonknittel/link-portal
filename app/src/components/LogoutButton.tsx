@@ -1,18 +1,27 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { FaSignOutAlt } from "react-icons/fa";
+import { useState } from "react";
+import { FaSignOutAlt, FaSpinner } from "react-icons/fa";
 import Button from "./Button";
 
 const LogoutButton = () => {
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoggingOut(true);
+    await signOut();
+  };
+
   return (
     <Button
-      onClick={() => signOut()}
+      onClick={() => void handleClick()}
       variant="secondary"
       title="Logout"
       iconOnly={true}
+      disabled={isLoggingOut}
     >
-      <FaSignOutAlt />
+      {isLoggingOut ? <FaSpinner className="animate-spin" /> : <FaSignOutAlt />}
     </Button>
   );
 };

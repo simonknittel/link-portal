@@ -1,11 +1,6 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  FaChartLine,
-  FaRegPlusSquare,
-  FaRegUser,
-  FaStar,
-} from "react-icons/fa";
+import { FaChartLine, FaStar } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
 import DashboardSearch from "~/components/DashboardSearch";
 import NewSharedLinkModalButton from "~/components/NewSharedLinkModalButton";
@@ -78,29 +73,6 @@ export default async function Page({ params }: Props) {
           {/* <p className="italic text-slate-500">
               You don&apos;t have any favourites.
             </p> */}
-        </section>
-
-        <section className="mt-8">
-          <div className="mb-4 flex items-center gap-2">
-            <h3 className="flex items-center gap-2 text-xl font-bold">
-              <FaRegUser />
-              Your custom links
-            </h3>
-
-            <button
-              title="Add custom link"
-              type="button"
-              className="rounded p-2 text-xl text-sky-400 hover:bg-slate-800"
-            >
-              <FaRegPlusSquare />
-            </button>
-          </div>
-
-          {/* <ul className="grid grid-cols-4 gap-2"></ul> */}
-
-          <p className="italic text-slate-500">
-            You don&apos;t have any custom links.
-          </p>
         </section>
 
         <section className="mt-8">

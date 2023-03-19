@@ -4,18 +4,18 @@ import { type Team } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
-import { FaChevronDown, FaRegPlusSquare } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import Avatar from "./Avatar";
 import Button from "./Button";
-import CreateTeamModal from "./CreateTeamModal";
+import CreateTeamButton from "./CreateTeamButton";
 
 interface Props {
   teams: Team[];
+  selectedTeam?: Team;
 }
 
-const TeamSelectorFlyout = ({ teams }: Props) => {
-  const [flyoutIsOpen, setFlyoutIsOpen] = useState(false);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+const TeamSelectorFlyout = ({ teams, selectedTeam }: Props) => {
+  const [flyoutIsOpen, setFlyoutIsOpen] = useState(!Boolean(selectedTeam));
 
   return (
     <>
@@ -42,29 +42,23 @@ const TeamSelectorFlyout = ({ teams }: Props) => {
               <li key={team.slug}>
                 <Link
                   href={`/app/team/${team.slug}`}
-                  className="p-4 flex gap-2 items-center hover:bg-slate-700 rounded"
+                  className="p-4 flex justify-between items-center hover:bg-slate-700 rounded"
                 >
-                  <Avatar name={team.name} image={team.image} size={32} />
-                  {team.name}
+                  <span className="flex gap-2 items-center">
+                    <Avatar name={team.name} image={team.image} size={32} />
+                    {team.name}
+                  </span>
+
+                  <FaChevronRight />
                 </Link>
               </li>
             ))}
 
           <li>
-            <button
-              className="p-4 flex gap-2 items-center hover:bg-slate-700 text-slate-500 rounded w-full"
-              onClick={() => setModalIsOpen(true)}
-            >
-              <FaRegPlusSquare /> Create new team
-            </button>
+            <CreateTeamButton />
           </li>
         </ul>
       </div>
-
-      <CreateTeamModal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-      />
     </>
   );
 };

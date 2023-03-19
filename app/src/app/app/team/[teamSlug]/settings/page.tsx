@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
+import { FaCog } from "react-icons/fa";
 import AddTeamMember from "~/components/AddTeamMember";
 import DeleteTeamButton from "~/components/DeleteTeamButton";
 import TeamMembersTable from "~/components/TeamMembersTable";
@@ -42,18 +43,21 @@ export default async function Page({ params }: Props) {
 
   return (
     <main className="p-8">
-      <h1 className="font-bold text-2xl">Team settings</h1>
+      <h1 className="font-bold text-2xl flex items-center gap-4">
+        <FaCog />
+        Team settings
+      </h1>
 
-      <section className="p-8 bg-slate-700 rounded max-w-4xl mt-4">
-        <h2 className="font-bold text-2xl">Members</h2>
+      <section className="p-8 bg-slate-700 rounded max-w-4xl mt-8">
+        <h2 className="font-bold text-xl">Members</h2>
 
         <AddTeamMember teamId={team.id} />
 
         <TeamMembersTable team={team} teamMembers={teamMembers} />
       </section>
 
-      <section className="p-8 bg-red-900 rounded bg-opacity-25 max-w-4xl mt-4">
-        <h2 className="font-bold text-2xl text-red-500">Danger zone</h2>
+      <section className="p-8 bg-red-900 rounded bg-opacity-25 max-w-4xl mt-8">
+        <h2 className="font-bold text-xl text-red-500">Danger zone</h2>
 
         <p className="mt-4">Delete the team and all links of this team.</p>
 

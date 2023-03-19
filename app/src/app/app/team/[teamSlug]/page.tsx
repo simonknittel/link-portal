@@ -1,9 +1,7 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
-import { FaChartLine, FaStar } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
-import DashboardSearch from "~/components/DashboardSearch";
-import NewSharedLinkModalButton from "~/components/NewSharedLinkModalButton";
 import DASHBOARD_ITEMS from "~/dashboard-items";
 import { getTeamBySlug } from "~/server/services/team";
 
@@ -50,32 +48,17 @@ export default async function Page({ params }: Props) {
 
   return (
     <>
-      <div className="bg-slate-700 p-8">
+      {/* <div className="bg-slate-700 p-8">
         <DashboardSearch />
-      </div>
+      </div> */}
 
       <main className="p-8">
-        <section>
-          <h3 className="mb-4 flex items-center gap-2 text-xl font-bold">
-            <FaStar className="text-amber-400" />
-            Your favourites
-          </h3>
+        <h1 className="font-bold text-2xl flex items-center gap-4">
+          <FaUsers />
+          Team dashboard
+        </h1>
 
-          <ul className="grid grid-cols-4 gap-2">
-            <DashboardItem
-              href="https://mail.google.com/mail/u/?authuser=hallo@simonknittel.de"
-              title="Gmail"
-              description="Primary email provider"
-              isFavourite={true}
-            />
-          </ul>
-
-          {/* <p className="italic text-slate-500">
-              You don&apos;t have any favourites.
-            </p> */}
-        </section>
-
-        <section className="mt-8">
+        {/* <section className="mt-8">
           <h3 className="mb-4 flex items-center gap-2 text-xl font-bold">
             <FaChartLine />
             Most common
@@ -94,13 +77,7 @@ export default async function Page({ params }: Props) {
               description="Primary Git provider and CI/CD platform"
             />
           </ul>
-        </section>
-
-        <div className="mt-16 mb-8 flex items-center gap-2">
-          <h2 className="text-4xl">All links</h2>
-
-          <NewSharedLinkModalButton />
-        </div>
+        </section> */}
 
         {sections.map((section) => (
           <section key={section.title} className="mt-8">

@@ -106,8 +106,8 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
               <Button
                 onClick={() => void handleRemove(props.row.original.user)}
                 variant="secondary"
-                title="Delete"
-                aria-label={`Remove "X" from team "${team.name}"`}
+                title={`Remove user "${props.row.original.user.name}" from team "${team.name}"`}
+                aria-label={`Remove user "${props.row.original.user.name}" from team "${team.name}"`}
                 iconOnly={true}
                 disabled={Boolean(isDeleting)}
               >

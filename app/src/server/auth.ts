@@ -36,7 +36,6 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  // TODO: Create personal project on user creation
   callbacks: {
     session({ session, user }) {
       if (session.user) {
@@ -67,7 +66,7 @@ export const authOptions: NextAuthOptions = {
 
       const createdProject = await prisma.project.create({
         data: {
-          name: "Personal",
+          name: "Your personal project",
           slug: slugWithCuid,
         },
       });

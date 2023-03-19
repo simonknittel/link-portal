@@ -24,6 +24,7 @@ const ProjectSelectorFlyout = ({ projects, selectedProject }: Props) => {
         title="Open project selection"
         iconOnly={true}
         onClick={() => setFlyoutIsOpen((value) => !value)}
+        className="flex-none"
       >
         <FaChevronDown />
       </Button>
@@ -42,16 +43,18 @@ const ProjectSelectorFlyout = ({ projects, selectedProject }: Props) => {
               <li key={project.slug}>
                 <Link
                   href={`/app/project/${project.slug}`}
-                  className="p-4 flex justify-between items-center hover:bg-slate-700 rounded"
+                  className="p-4 flex justify-between items-center hover:bg-slate-700 rounded gap-2"
                 >
-                  <span className="flex gap-2 items-center">
-                    <Avatar
-                      name={project.name}
-                      image={project.image}
-                      size={32}
-                    />
+                  <Avatar
+                    name={project.name}
+                    image={project.image}
+                    size={32}
+                    className="flex-shrink-0"
+                  />
+
+                  <p className="text-ellipsis overflow-hidden whitespace-nowrap flex-1">
                     {project.name}
-                  </span>
+                  </p>
 
                   <FaChevronRight />
                 </Link>

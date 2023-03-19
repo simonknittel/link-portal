@@ -1,17 +1,27 @@
+import { type Project } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
-import { FaChevronRight, FaCog, FaUserAlt, FaUsers } from "react-icons/fa";
-import { getAllProjects } from "~/server/services/project";
+import {
+  FaChevronRight,
+  FaCog,
+  FaListUl,
+  FaUserAlt,
+  FaUsers,
+} from "react-icons/fa";
+import { authOptions } from "~/server/auth";
+import { prisma } from "~/server/db";
 import Account from "./Account";
 import Avatar from "./Avatar";
 import CreateProjectButton from "./CreateProjectButton";
 import ProjectSelector from "./ProjectSelector";
 
 interface Props {
-  projectSlug?: string;
+  project?: Project | null;
 }
 
-const Sidebar = async ({ projectSlug }: Props) => {
-  const projects = await getAllProjects();
+const Sidebar = async ({ project }: Props) => {
+  const session = await getServerSession(authOptions)!;
+  const projects = await prisma.project.findMany();
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -32,14 +42,14 @@ const Sidebar = async ({ projectSlug }: Props) => {
           </ul>
         </nav>
 
-        <ProjectSelector projectSlug={projectSlug} />
+        <ProjectSelector activeProject={project} />
 
-        {projectSlug ? (
+        {project ? (
           <nav className="p-4">
             <ul>
               <li>
                 <Link
-                  href={`/app/project/${projectSlug}`}
+                  href={`/app/project/${project.slug}`}
                   className="flex gap-2 items-center p-4 hover:bg-slate-800 rounded"
                 >
                   <FaUsers />
@@ -49,7 +59,27 @@ const Sidebar = async ({ projectSlug }: Props) => {
 
               <li>
                 <Link
-                  href={`/app/project/${projectSlug}/settings`}
+                  href={`/app/project/${project.slug}/links`}
+                  className="flex gap-2 items-center p-4 hover:bg-slate-800 rounded"
+                >
+                  <FaListUl />
+                  Links
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href={`/app/project/${project.slug}/tags`}
+                  className="flex gap-2 items-center p-4 hover:bg-slate-800 rounded"
+                >
+                  <FaListUl />
+                  Tags
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href={`/app/project/${project.slug}/settings`}
                   className="flex gap-2 items-center p-4 hover:bg-slate-800 rounded"
                 >
                   <FaCog />
@@ -67,16 +97,18 @@ const Sidebar = async ({ projectSlug }: Props) => {
                   <li key={project.slug}>
                     <Link
                       href={`/app/project/${project.slug}`}
-                      className="p-4 flex justify-between items-center hover:bg-slate-800 rounded"
+                      className="p-4 flex gap-2 justify-between items-center hover:bg-slate-800 rounded"
                     >
-                      <span className="flex gap-2 items-center">
-                        <Avatar
-                          name={project.name}
-                          image={project.image}
-                          size={32}
-                        />
+                      <Avatar
+                        name={project.name}
+                        image={project.image}
+                        size={32}
+                        className="flex-shrink-0"
+                      />
+
+                      <p className="text-ellipsis overflow-hidden whitespace-nowrap flex-1">
                         {project.name}
-                      </span>
+                      </p>
 
                       <FaChevronRight />
                     </Link>

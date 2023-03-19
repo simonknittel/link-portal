@@ -27,7 +27,6 @@ const config = {
 
   images: {
     domains: [
-      'via.placeholder.com',
       'avatars.githubusercontent.com'
     ]
   }

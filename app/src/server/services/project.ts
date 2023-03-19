@@ -7,7 +7,3 @@ export function getProjectBySlug(slug: string) {
     },
   });
 }
-
-export function getAllProjects() {
-  return prisma.project.findMany();
-}

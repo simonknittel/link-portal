@@ -1,6 +1,6 @@
 "use client";
 
-import { type Team } from "@prisma/client";
+import { type Project } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -8,7 +8,7 @@ import { FaPlusSquare, FaSpinner } from "react-icons/fa";
 import Button from "./Button";
 
 interface Props {
-  teamId: Team["id"];
+  projectId: Project["id"];
 }
 
 interface FormValues {
@@ -16,7 +16,7 @@ interface FormValues {
   role: "1" | "2";
 }
 
-const AddTeamMember = ({ teamId }: Props) => {
+const AddProjectMember = ({ projectId }: Props) => {
   const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
   const { register, handleSubmit, reset } = useForm<FormValues>();
@@ -25,10 +25,10 @@ const AddTeamMember = ({ teamId }: Props) => {
     setIsAdding(true);
 
     try {
-      const response = await fetch("/api/team-member", {
+      const response = await fetch("/api/project-member", {
         method: "POST",
         body: JSON.stringify({
-          teamId,
+          projectId,
           email: data.email,
           role: parseInt(data.role),
         }),
@@ -71,4 +71,4 @@ const AddTeamMember = ({ teamId }: Props) => {
   );
 };
 
-export default AddTeamMember;
+export default AddProjectMember;

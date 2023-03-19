@@ -36,7 +36,7 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  // TODO: Create personal team on user creation
+  // TODO: Create personal project on user creation
   callbacks: {
     session({ session, user }) {
       if (session.user) {
@@ -65,16 +65,16 @@ export const authOptions: NextAuthOptions = {
       });
       const slugWithCuid = slugifiedName + "-" + createId();
 
-      const createdTeam = await prisma.team.create({
+      const createdProject = await prisma.project.create({
         data: {
           name: "Personal",
           slug: slugWithCuid,
         },
       });
 
-      await prisma.teamMember.create({
+      await prisma.projectMember.create({
         data: {
-          teamId: createdTeam.id,
+          projectId: createdProject.id,
           userId: user.id,
           role: 2,
         },

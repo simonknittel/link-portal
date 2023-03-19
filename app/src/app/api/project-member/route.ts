@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
-  // TODO: Check if user is team member and has role 2
+  // TODO: Check if user is project member and has role 2
 
   try {
     const body = await request.json();
@@ -23,15 +23,15 @@ export async function POST(request: Request) {
       return NextResponse.json({}, { status: 400 });
     }
 
-    const createdTeamMember = await prisma.teamMember.create({
+    const createdProjectMember = await prisma.projectMember.create({
       data: {
-        teamId: body.teamId,
+        projectId: body.projectId,
         userId: user.id,
         role: body.role,
       },
     });
 
-    return NextResponse.json(createdTeamMember);
+    return NextResponse.json(createdProjectMember);
   } catch (error) {
     console.error(error);
     return NextResponse.json({}, { status: 500 });
@@ -42,15 +42,15 @@ export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
-  // TODO: Check if user is team member, has role 2, removes himself and there is one other admin left
+  // TODO: Check if user is project member, has role 2, removes himself and there is one other admin left
 
   try {
     const body = await request.json();
 
-    await prisma.teamMember.delete({
+    await prisma.projectMember.delete({
       where: {
-        teamId_userId: {
-          teamId: body.teamId,
+        projectId_userId: {
+          projectId: body.projectId,
           userId: body.userId,
         },
       },

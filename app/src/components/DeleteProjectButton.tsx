@@ -1,16 +1,16 @@
 "use client";
 
-import { type Team } from "@prisma/client";
+import { type Project } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import Button from "./Button";
 
 interface Props {
-  team: Team;
+  project: Project;
 }
 
-const DeleteTeamButton = ({ team }: Props) => {
+const DeleteProjectButton = ({ project }: Props) => {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -18,7 +18,7 @@ const DeleteTeamButton = ({ team }: Props) => {
     setIsDeleting(true);
 
     const confirm = window.confirm(
-      `You are about to delete team "${team.name}". Do you want to continue?`
+      `You are about to delete project "${project.name}". Do you want to continue?`
     );
 
     if (!confirm) {
@@ -27,7 +27,7 @@ const DeleteTeamButton = ({ team }: Props) => {
     }
 
     try {
-      const response = await fetch(`/api/team/${team.id}`, {
+      const response = await fetch(`/api/project/${project.id}`, {
         method: "DELETE",
       });
 
@@ -50,9 +50,9 @@ const DeleteTeamButton = ({ team }: Props) => {
       colorScheme="red"
     >
       {isDeleting ? <FaSpinner className="animate-spin" /> : <FaTrash />}
-      Delete team
+      Delete project
     </Button>
   );
 };
 
-export default DeleteTeamButton;
+export default DeleteProjectButton;

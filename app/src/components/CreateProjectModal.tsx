@@ -1,7 +1,7 @@
 "use client";
 
 import { init } from "@paralleldrive/cuid2";
-import { type Team } from "@prisma/client";
+import { type Project } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -20,7 +20,7 @@ interface FormValues {
   slug: string;
 }
 
-const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
+const CreateProjectModal = ({ isOpen, onRequestClose }: Props) => {
   const router = useRouter();
   const { register, handleSubmit, watch, setValue } = useForm<FormValues>();
   const [isCreating, setIsCreating] = useState(false);
@@ -29,7 +29,7 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
     setIsCreating(true);
 
     try {
-      const response = await fetch("/api/teams", {
+      const response = await fetch("/api/projects", {
         method: "POST",
         body: JSON.stringify({
           name: data.name,
@@ -37,9 +37,9 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
         }),
       });
 
-      const createdTeam = (await response.json()) as Team;
+      const createdProject = (await response.json()) as Project;
 
-      router.push(`/app/team/${createdTeam.slug}`);
+      router.push(`/app/project/${createdProject.slug}`);
     } catch (error) {
       setIsCreating(false);
     }
@@ -67,7 +67,7 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
       onRequestClose={onRequestClose}
       className="w-[480px]"
     >
-      <h2 className="text-xl font-bold">Create new team</h2>
+      <h2 className="text-xl font-bold">Create new project</h2>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <label className="mt-4 block">Name</label>
@@ -95,4 +95,4 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
   );
 };
 
-export default CreateTeamModal;
+export default CreateProjectModal;

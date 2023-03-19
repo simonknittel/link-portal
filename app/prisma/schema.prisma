@@ -18,8 +18,8 @@ model Link {
     href             String
     tags             Tag[]
     LinkUserKeyValue LinkUserKeyValue[]
-    teamId           String
-    team             Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    projectId        String
+    project          Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Tag {
@@ -27,8 +27,8 @@ model Tag {
     title       String
     description String? // @db.Text
     links       Link[]
-    teamId      String
-    team        Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    projectId   String
+    project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model LinkUserKeyValue {
@@ -43,24 +43,24 @@ model LinkUserKeyValue {
     @@id([linkId, userId, key])
 }
 
-model Team {
-    id          String       @id @default(cuid())
-    name        String
-    slug        String       @unique
-    links       Link[]
-    tags        Tag[]
-    teamMembers TeamMember[]
-    image       String?
+model Project {
+    id             String          @id @default(cuid())
+    name           String
+    slug           String          @unique
+    links          Link[]
+    tags           Tag[]
+    projectMembers ProjectMember[]
+    image          String?
 }
 
-model TeamMember {
-    teamId String
-    team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
-    userId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    role   Int    @default(1) // 1 = Member, 2 = Admin
+model ProjectMember {
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    userId    String
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role      Int     @default(1) // 1 = Member, 2 = Admin
 
-    @@id([teamId, userId])
+    @@id([projectId, userId])
 }
 
 // Necessary for Next auth
@@ -99,7 +99,7 @@ model User {
     accounts         Account[]
     sessions         Session[]
     LinkUserKeyValue LinkUserKeyValue[]
-    teams            TeamMember[]
+    projects         ProjectMember[]
 }
 
 model VerificationToken {

@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { FaUsers } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
 import DASHBOARD_ITEMS from "~/dashboard-items";
-import { getTeamBySlug } from "~/server/services/team";
+import { getProjectBySlug } from "~/server/services/project";
 
 interface Params {
-  teamSlug: string;
+  projectSlug: string;
 }
 
 export async function generateMetadata({
@@ -14,11 +14,11 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const team = await getTeamBySlug(params.teamSlug);
-  if (!team) return {};
+  const project = await getProjectBySlug(params.projectSlug);
+  if (!project) return {};
 
   return {
-    title: `Dashboard - ${team.name || ""} | Link Portal`,
+    title: `Dashboard - ${project.name || ""} | Link Portal`,
   };
 }
 
@@ -27,8 +27,8 @@ interface Props {
 }
 
 export default async function Page({ params }: Props) {
-  const team = await getTeamBySlug(params.teamSlug);
-  if (!team) notFound();
+  const project = await getProjectBySlug(params.projectSlug);
+  if (!project) notFound();
 
   const tagSet = new Set<string>();
 
@@ -55,7 +55,7 @@ export default async function Page({ params }: Props) {
       <main className="p-8">
         <h1 className="font-bold text-2xl flex items-center gap-4">
           <FaUsers />
-          Team dashboard
+          Project dashboard
         </h1>
 
         {/* <section className="mt-8">

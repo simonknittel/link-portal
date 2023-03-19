@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { FaRegPlusSquare } from "react-icons/fa";
-import CreateTeamModal from "./CreateTeamModal";
+import CreateProjectModal from "./CreateProjectModal";
 
-const CreateTeamButton = () => {
+const CreateProjectButton = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   return (
@@ -13,10 +13,10 @@ const CreateTeamButton = () => {
         className="p-4 flex gap-2 items-center hover:bg-slate-700 text-sky-500 rounded w-full justify-center"
         onClick={() => setModalIsOpen(true)}
       >
-        <FaRegPlusSquare /> Create new team
+        <FaRegPlusSquare /> Create new project
       </button>
 
-      <CreateTeamModal
+      <CreateProjectModal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
       />
@@ -24,4 +24,4 @@ const CreateTeamButton = () => {
   );
 };
 
-export default CreateTeamButton;
+export default CreateProjectButton;

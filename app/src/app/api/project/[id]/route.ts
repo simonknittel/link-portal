@@ -3,29 +3,24 @@ import { NextResponse } from "next/server";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
-export async function POST(request: Request) {
+interface Params {
+  id: string;
+}
+
+export async function DELETE(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
+  // TODO: Check if user is project member and has role 2
+
   try {
-    const body = await request.json();
-
-    const createdTeam = await prisma.team.create({
-      data: {
-        name: body.name,
-        slug: body.slug,
+    await prisma.project.delete({
+      where: {
+        id: params.id,
       },
     });
 
-    await prisma.teamMember.create({
-      data: {
-        teamId: createdTeam.id,
-        userId: session.user.id,
-        role: 2,
-      },
-    });
-
-    return NextResponse.json(createdTeam);
+    return NextResponse.json({});
   } catch (error) {
     console.error(error);
     return NextResponse.json({}, { status: 500 });

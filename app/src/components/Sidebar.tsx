@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { FaChevronRight, FaCog, FaUserAlt, FaUsers } from "react-icons/fa";
-import { getAllTeams } from "~/server/services/team";
+import { getAllProjects } from "~/server/services/project";
 import Account from "./Account";
 import Avatar from "./Avatar";
-import CreateTeamButton from "./CreateTeamButton";
-import TeamSelector from "./TeamSelector";
+import CreateProjectButton from "./CreateProjectButton";
+import ProjectSelector from "./ProjectSelector";
 
 interface Props {
-  teamSlug?: string;
+  projectSlug?: string;
 }
 
-const Sidebar = async ({ teamSlug }: Props) => {
-  const teams = await getAllTeams();
+const Sidebar = async ({ projectSlug }: Props) => {
+  const projects = await getAllProjects();
 
   return (
     <div className="flex h-full flex-col justify-between">
@@ -32,28 +32,28 @@ const Sidebar = async ({ teamSlug }: Props) => {
           </ul>
         </nav>
 
-        <TeamSelector teamSlug={teamSlug} />
+        <ProjectSelector projectSlug={projectSlug} />
 
-        {teamSlug ? (
+        {projectSlug ? (
           <nav className="p-4">
             <ul>
               <li>
                 <Link
-                  href={`/app/team/${teamSlug}`}
+                  href={`/app/project/${projectSlug}`}
                   className="flex gap-2 items-center p-4 hover:bg-slate-800 rounded"
                 >
                   <FaUsers />
-                  Team dashboard
+                  Project dashboard
                 </Link>
               </li>
 
               <li>
                 <Link
-                  href={`/app/team/${teamSlug}/settings`}
+                  href={`/app/project/${projectSlug}/settings`}
                   className="flex gap-2 items-center p-4 hover:bg-slate-800 rounded"
                 >
                   <FaCog />
-                  Team settings
+                  Project settings
                 </Link>
               </li>
             </ul>
@@ -61,17 +61,21 @@ const Sidebar = async ({ teamSlug }: Props) => {
         ) : (
           <nav className="p-4">
             <ul>
-              {teams
+              {projects
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .map((team) => (
-                  <li key={team.slug}>
+                .map((project) => (
+                  <li key={project.slug}>
                     <Link
-                      href={`/app/team/${team.slug}`}
+                      href={`/app/project/${project.slug}`}
                       className="p-4 flex justify-between items-center hover:bg-slate-800 rounded"
                     >
                       <span className="flex gap-2 items-center">
-                        <Avatar name={team.name} image={team.image} size={32} />
-                        {team.name}
+                        <Avatar
+                          name={project.name}
+                          image={project.image}
+                          size={32}
+                        />
+                        {project.name}
                       </span>
 
                       <FaChevronRight />
@@ -80,7 +84,7 @@ const Sidebar = async ({ teamSlug }: Props) => {
                 ))}
 
               <li>
-                <CreateTeamButton />
+                <CreateProjectButton />
               </li>
             </ul>
           </nav>

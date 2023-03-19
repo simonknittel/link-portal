@@ -1,6 +1,6 @@
 "use client";
 
-import { type Team, type TeamMember, type User } from "@prisma/client";
+import { type Project, type ProjectMember, type User } from "@prisma/client";
 import {
   createColumnHelper,
   flexRender,
@@ -14,15 +14,15 @@ import Avatar from "./Avatar";
 import Button from "./Button";
 
 interface Props {
-  team: Team;
-  teamMembers: (TeamMember & { user: User })[];
+  project: Project;
+  projectMembers: (ProjectMember & { user: User })[];
 }
 
-type Row = TeamMember & { user: User };
+type Row = ProjectMember & { user: User };
 
 const columnHelper = createColumnHelper<Row>();
 
-const TeamMembersTable = ({ team, teamMembers }: Props) => {
+const ProjectMembersTable = ({ project, projectMembers }: Props) => {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState<User["id"] | null>(null);
 
@@ -31,7 +31,7 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
 
     try {
       const confirmation = window.confirm(
-        `You are about to remove "${user.name}" from team "${team.name}". Do you want to continue?`
+        `You are about to remove "${user.name}" from project "${project.name}". Do you want to continue?`
       );
 
       if (!confirmation) {
@@ -39,10 +39,10 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
         return;
       }
 
-      const response = await fetch("/api/team-member", {
+      const response = await fetch("/api/project-member", {
         method: "DELETE",
         body: JSON.stringify({
-          teamId: team.id,
+          projectId: project.id,
           userId: user.id,
         }),
       });
@@ -94,8 +94,9 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
       columnHelper.display({
         id: "actions",
         cell: (props) => {
-          const adminCount = teamMembers.reduce(
-            (count, teamMember) => (teamMember.role === 2 ? count + 1 : count),
+          const adminCount = projectMembers.reduce(
+            (count, projectMember) =>
+              projectMember.role === 2 ? count + 1 : count,
             0
           );
 
@@ -106,8 +107,8 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
               <Button
                 onClick={() => void handleRemove(props.row.original.user)}
                 variant="secondary"
-                title={`Remove user "${props.row.original.user.name}" from team "${team.name}"`}
-                aria-label={`Remove user "${props.row.original.user.name}" from team "${team.name}"`}
+                title={`Remove user "${props.row.original.user.name}" from project "${project.name}"`}
+                aria-label={`Remove user "${props.row.original.user.name}" from project "${project.name}"`}
                 iconOnly={true}
                 disabled={Boolean(isDeleting)}
               >
@@ -122,10 +123,10 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
         },
       }),
     ];
-  }, [teamMembers.length, team.name, isDeleting]);
+  }, [projectMembers.length, project.name, isDeleting]);
 
   const table = useReactTable({
-    data: teamMembers,
+    data: projectMembers,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -170,4 +171,4 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
   );
 };
 
-export default TeamMembersTable;
+export default ProjectMembersTable;

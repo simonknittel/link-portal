@@ -4,7 +4,7 @@ import DashboardItem from "~/components/DashboardItem";
 import Sidebar from "~/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Teams | Link Portal",
+  title: "Projects | Link Portal",
 };
 
 export default function Page() {

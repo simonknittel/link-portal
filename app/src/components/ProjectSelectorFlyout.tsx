@@ -1,27 +1,27 @@
 "use client";
 
-import { type Team } from "@prisma/client";
+import { type Project } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import Avatar from "./Avatar";
 import Button from "./Button";
-import CreateTeamButton from "./CreateTeamButton";
+import CreateProjectButton from "./CreateProjectButton";
 
 interface Props {
-  teams: Team[];
-  selectedTeam?: Team;
+  projects: Project[];
+  selectedProject?: Project;
 }
 
-const TeamSelectorFlyout = ({ teams, selectedTeam }: Props) => {
-  const [flyoutIsOpen, setFlyoutIsOpen] = useState(!Boolean(selectedTeam));
+const ProjectSelectorFlyout = ({ projects, selectedProject }: Props) => {
+  const [flyoutIsOpen, setFlyoutIsOpen] = useState(!Boolean(selectedProject));
 
   return (
     <>
       <Button
         variant="secondary"
-        title="Open team selection"
+        title="Open project selection"
         iconOnly={true}
         onClick={() => setFlyoutIsOpen((value) => !value)}
       >
@@ -36,17 +36,21 @@ const TeamSelectorFlyout = ({ teams, selectedTeam }: Props) => {
         })}
       >
         <ul>
-          {teams
+          {projects
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map((team) => (
-              <li key={team.slug}>
+            .map((project) => (
+              <li key={project.slug}>
                 <Link
-                  href={`/app/team/${team.slug}`}
+                  href={`/app/project/${project.slug}`}
                   className="p-4 flex justify-between items-center hover:bg-slate-700 rounded"
                 >
                   <span className="flex gap-2 items-center">
-                    <Avatar name={team.name} image={team.image} size={32} />
-                    {team.name}
+                    <Avatar
+                      name={project.name}
+                      image={project.image}
+                      size={32}
+                    />
+                    {project.name}
                   </span>
 
                   <FaChevronRight />
@@ -55,7 +59,7 @@ const TeamSelectorFlyout = ({ teams, selectedTeam }: Props) => {
             ))}
 
           <li>
-            <CreateTeamButton />
+            <CreateProjectButton />
           </li>
         </ul>
       </div>
@@ -63,4 +67,4 @@ const TeamSelectorFlyout = ({ teams, selectedTeam }: Props) => {
   );
 };
 
-export default TeamSelectorFlyout;
+export default ProjectSelectorFlyout;

@@ -7,8 +7,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Avatar from "./Avatar";
 import Button from "./Button";
 
@@ -22,8 +23,36 @@ type Row = TeamMember & { user: User };
 const columnHelper = createColumnHelper<Row>();
 
 const TeamMembersTable = ({ team, teamMembers }: Props) => {
-  const handleRemove = (userId: User["id"]) => {
-    console.log("handleRemove", userId);
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState<User["id"] | null>(null);
+
+  const handleRemove = async (user: User) => {
+    setIsDeleting(user.id);
+
+    try {
+      const confirmation = window.confirm(
+        `You are about to remove "${user.name}" from team "${team.name}". Do you want to continue?`
+      );
+
+      if (!confirmation) {
+        setIsDeleting(null);
+        return;
+      }
+
+      const response = await fetch("/api/team-member", {
+        method: "DELETE",
+        body: JSON.stringify({
+          teamId: team.id,
+          userId: user.id,
+        }),
+      });
+
+      if (!response.ok) return;
+
+      router.refresh();
+    } catch (error) {}
+
+    setIsDeleting(null);
   };
 
   const columns = useMemo(() => {
@@ -65,23 +94,35 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
       columnHelper.display({
         id: "actions",
         cell: (props) => {
+          const adminCount = teamMembers.reduce(
+            (count, teamMember) => (teamMember.role === 2 ? count + 1 : count),
+            0
+          );
+
+          if (adminCount < 2 && props.row.original.role === 2) return null;
+
           return (
             <div className="flex justify-end gap-2">
               <Button
-                onClick={() => handleRemove(props.row.original.userId)}
+                onClick={() => void handleRemove(props.row.original.user)}
                 variant="secondary"
                 title="Delete"
                 aria-label={`Remove "X" from team "${team.name}"`}
                 iconOnly={true}
+                disabled={Boolean(isDeleting)}
               >
-                <FaRegTrashAlt />
+                {isDeleting === props.row.original.userId ? (
+                  <FaSpinner className="animate-spin" />
+                ) : (
+                  <FaRegTrashAlt />
+                )}
               </Button>
             </div>
           );
         },
       }),
     ];
-  }, [team.name]);
+  }, [teamMembers.length, team.name, isDeleting]);
 
   const table = useReactTable({
     data: teamMembers,
@@ -93,7 +134,10 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
     <table className="mt-8 w-full">
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
+          <tr
+            key={headerGroup.id}
+            className="grid grid-cols-[1fr_1fr_1fr_8rem] items-center gap-4"
+          >
             {headerGroup.headers.map((header) => (
               <th key={header.id} className="text-left">
                 {header.isPlaceholder
@@ -110,9 +154,12 @@ const TeamMembersTable = ({ team, teamMembers }: Props) => {
 
       <tbody>
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
+          <tr
+            key={row.id}
+            className="grid grid-cols-[1fr_1fr_1fr_8rem] items-center gap-4 hover:bg-slate-600 px-2 h-14 rounded -mx-2 first:mt-2"
+          >
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id} className="py-2">
+              <td key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}

@@ -69,7 +69,7 @@ const CreateTeamModal = ({ isOpen, onRequestClose }: Props) => {
     >
       <h2 className="text-xl font-bold">Create new team</h2>
 
-      <form onSubmit={() => void handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <label className="mt-4 block">Name</label>
         <input
           className="h-11 w-full rounded bg-slate-600 px-4"

@@ -7,22 +7,27 @@ export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
-  const body = await request.json();
+  try {
+    const body = await request.json();
 
-  const createdTeam = await prisma.team.create({
-    data: {
-      name: body.name,
-      slug: body.slug,
-    },
-  });
+    const createdTeam = await prisma.team.create({
+      data: {
+        name: body.name,
+        slug: body.slug,
+      },
+    });
 
-  await prisma.teamMember.create({
-    data: {
-      teamId: createdTeam.id,
-      userId: session.user.id,
-      role: 2,
-    },
-  });
+    await prisma.teamMember.create({
+      data: {
+        teamId: createdTeam.id,
+        userId: session.user.id,
+        role: 2,
+      },
+    });
 
-  return NextResponse.json(createdTeam);
+    return NextResponse.json(createdTeam);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({}, { status: 500 });
+  }
 }

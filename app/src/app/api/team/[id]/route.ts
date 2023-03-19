@@ -4,7 +4,7 @@ import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 interface Params {
-  teamId: string;
+  id: string;
 }
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
@@ -13,11 +13,16 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
 
   // TODO: Check if user is team member and has role 2
 
-  await prisma.team.delete({
-    where: {
-      id: params.teamId,
-    },
-  });
+  try {
+    await prisma.team.delete({
+      where: {
+        id: params.id,
+      },
+    });
 
-  return NextResponse.json({});
+    return NextResponse.json({});
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({}, { status: 500 });
+  }
 }

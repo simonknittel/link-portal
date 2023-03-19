@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
+import AddTeamMember from "~/components/AddTeamMember";
 import DeleteTeamButton from "~/components/DeleteTeamButton";
 import TeamMembersTable from "~/components/TeamMembersTable";
 import { prisma } from "~/server/db";
@@ -45,6 +46,8 @@ export default async function Page({ params }: Props) {
 
       <section className="p-8 bg-slate-700 rounded max-w-4xl mt-4">
         <h2 className="font-bold text-2xl">Members</h2>
+
+        <AddTeamMember teamId={team.id} />
 
         <TeamMembersTable team={team} teamMembers={teamMembers} />
       </section>

@@ -51,8 +51,8 @@ const FavouriteButton = ({ link, favourited }: Props) => {
       }
       className={clsx({
         "rounded p-2 hover:bg-slate-500": true,
-        "text-amber-400": favourited,
-        "text-sky-400": !favourited,
+        "text-amber-400": favourited && !isLoading,
+        "text-sky-400": !favourited || isLoading,
       })}
       type="button"
       onClick={(e) => void handleClick(e)}

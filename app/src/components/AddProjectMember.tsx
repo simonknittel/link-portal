@@ -53,6 +53,7 @@ const AddProjectMember = ({ projectId }: Props) => {
   };
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form className="mt-8 flex gap-2" onSubmit={handleSubmit(onSubmit)}>
       <input
         className="bg-slate-600 rounded flex-1 px-4"

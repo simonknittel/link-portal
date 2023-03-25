@@ -1,29 +1,23 @@
 "use client";
 
-import { type Link, type Project, type Tag } from "@prisma/client";
+import { type Project, type Tag } from "@prisma/client";
 import { useState } from "react";
 import { FaEdit, FaPlus } from "react-icons/fa";
 import Button from "./Button";
-import CreateOrEditLinkForm from "./CreateOrEditLinkForm";
+import CreateOrEditTagForm from "./CreateOrEditTagForm";
 import Modal from "./Modal";
-
-interface BaseProps {
-  tags: Tag[];
-}
 
 interface NewProps {
   projectId: Project["id"];
 }
 
 interface EditProps {
-  link: Link & {
-    tags: Tag[];
-  };
+  tag: Tag;
 }
 
-type Props = (NewProps | EditProps) & BaseProps;
+type Props = NewProps | EditProps;
 
-const CreateOrEditLinkModal = (props: Props) => {
+const CreateOrEditTagModal = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -49,10 +43,10 @@ const CreateOrEditLinkModal = (props: Props) => {
         className="w-[480px]"
       >
         <h2 className="text-xl font-bold">
-          {"projectId" in props ? "Create new link" : "Update link"}
+          {"projectId" in props ? "Create new tag" : "Update tag"}
         </h2>
 
-        <CreateOrEditLinkForm
+        <CreateOrEditTagForm
           {...props}
           handleSuccess={() => setIsOpen(false)}
         />
@@ -61,4 +55,4 @@ const CreateOrEditLinkModal = (props: Props) => {
   );
 };
 
-export default CreateOrEditLinkModal;
+export default CreateOrEditTagModal;

@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FaListUl } from "react-icons/fa";
-import CreateTagModal from "~/components/CreateTagModal";
+import CreateOrEditTagModal from "~/components/CreateOrEditTagModal";
 import TagsTable from "~/components/TagsTable";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";
@@ -46,7 +46,7 @@ export default async function Page({ params }: Props) {
           Tags
         </h1>
 
-        <CreateTagModal projectId={project.id} />
+        <CreateOrEditTagModal projectId={project.id} />
       </div>
 
       <div className="bg-slate-700 p-8 rounded mt-8">

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Button from "./Button";
+import CreateOrEditTagModal from "./CreateOrEditTagModal";
 
 interface Props {
   tags: Tag[];
@@ -63,6 +64,8 @@ const TagsTable = ({ tags }: Props) => {
         id: "actions",
         cell: (props) => (
           <div className="flex justify-end gap-2">
+            <CreateOrEditTagModal tag={props.row.original} />
+
             <Button
               onClick={() => void handleDelete(props.row.original)}
               variant="secondary"

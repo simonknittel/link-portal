@@ -1,5 +1,8 @@
+import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 import { type ReactNode } from "react";
 import Sidebar from "~/components/Sidebar";
+import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 interface Props {
@@ -15,6 +18,14 @@ export default async function ProjectLayout({ children, params }: Props) {
       slug: params.projectSlug,
     },
   });
+  const session = await getServerSession(authOptions);
+  if (
+    !project ||
+    !session?.user.projectMemberships.some(
+      (projectMembership) => projectMembership.projectId === project.id
+    )
+  )
+    notFound();
 
   return (
     <div className="min-h-screen">

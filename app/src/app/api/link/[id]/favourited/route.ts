@@ -11,9 +11,22 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
-  // TODO: Check if user is project member
-
   try {
+    const item = await prisma.link.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    if (!item) return NextResponse.json({}, { status: 404 });
+
+    if (
+      session.user.projectMemberships.some(
+        (projectMembership) => projectMembership.projectId === item.projectId
+      ) === false
+    )
+      return NextResponse.json({}, { status: 401 });
+
     const body = await request.json();
 
     const newValue = body.favourited ? "true" : "false";

@@ -1,9 +1,11 @@
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaCog } from "react-icons/fa";
 import AddProjectMember from "~/components/AddProjectMember";
 import DeleteProjectButton from "~/components/DeleteProjectButton";
 import ProjectMembersTable from "~/components/ProjectMembersTable";
+import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";
 
@@ -29,8 +31,19 @@ interface Props {
 }
 
 export default async function Page({ params }: Props) {
-  const project = await getProjectBySlug(params.projectSlug);
-  if (!project) notFound();
+  const project = await prisma.project.findUnique({
+    where: {
+      slug: params.projectSlug,
+    },
+  });
+  const session = await getServerSession(authOptions);
+  if (
+    !project ||
+    !session?.user.projectMemberships.some(
+      (projectMembership) => projectMembership.projectId === project.id
+    )
+  )
+    notFound();
 
   const projectMembers = await prisma.projectMember.findMany({
     where: {

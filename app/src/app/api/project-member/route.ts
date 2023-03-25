@@ -7,10 +7,17 @@ export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
-  // TODO: Check if user is project member and has role 2
-
   try {
     const body = await request.json();
+
+    if (
+      session.user.projectMemberships.some(
+        (projectMembership) =>
+          projectMembership.projectId === body.projectId &&
+          projectMembership.role === 2
+      ) === false
+    )
+      return NextResponse.json({}, { status: 401 });
 
     const user = await prisma.user.findUnique({
       where: {
@@ -42,10 +49,18 @@ export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
-  // TODO: Check if user is project member, has role 2, removes himself and there is one other admin left
-
   try {
     const body = await request.json();
+
+    // TODO: Check if user is removing himself and there is at least on other admin left
+    if (
+      session.user.projectMemberships.some(
+        (projectMembership) =>
+          projectMembership.projectId === body.projectId &&
+          projectMembership.role === 2
+      ) === false
+    )
+      return NextResponse.json({}, { status: 401 });
 
     await prisma.projectMember.delete({
       where: {

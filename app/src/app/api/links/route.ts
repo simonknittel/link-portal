@@ -10,7 +10,12 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // TODO: Check if user is part of project
+    if (
+      session.user.projectMemberships.some(
+        (projectMembership) => projectMembership.projectId === body.projectId
+      ) === false
+    )
+      return NextResponse.json({}, { status: 401 });
 
     const createdItem = await prisma.link.create({
       data: {

@@ -41,12 +41,18 @@ export default async function Page({ params }: Props) {
       },
     },
   });
-  if (!project) notFound();
-
   const session = await getServerSession(authOptions);
+  if (
+    !project ||
+    !session?.user.projectMemberships.some(
+      (projectMembership) => projectMembership.projectId === project.id
+    )
+  )
+    notFound();
+
   const linkUserKeyValue = await prisma.linkUserKeyValue.findMany({
     where: {
-      userId: session!.user.id,
+      userId: session.user.id,
     },
   });
 

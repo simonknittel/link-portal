@@ -1,8 +1,10 @@
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaListUl } from "react-icons/fa";
 import CreateOrEditLinkModal from "~/components/CreateOrEditLinkModal";
 import LinksTable from "~/components/LinksTable";
+import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";
 
@@ -41,7 +43,14 @@ export default async function Page({ params }: Props) {
       tags: true,
     },
   });
-  if (!project) notFound();
+  const session = await getServerSession(authOptions);
+  if (
+    !project ||
+    !session?.user.projectMemberships.some(
+      (projectMembership) => projectMembership.projectId === project.id
+    )
+  )
+    notFound();
 
   return (
     <main className="p-8">

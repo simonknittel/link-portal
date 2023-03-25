@@ -1,5 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { init } from "@paralleldrive/cuid2";
+import { type ProjectMember } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -21,12 +22,8 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // role: 0 | 1 | 2;
+      projectMemberships: ProjectMember[];
     } & DefaultSession["user"];
-  }
-
-  interface User {
-    // role: 0 | 1 | 2;
   }
 }
 
@@ -37,11 +34,20 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
+    async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        // session.user.role = user.role;
+
+        // Append project memberships to the session object since we use this information often
+        const projectMemberships = await prisma.projectMember.findMany({
+          where: {
+            userId: user.id,
+          },
+        });
+
+        session.user.projectMemberships = projectMemberships;
       }
+
       return session;
     },
   },

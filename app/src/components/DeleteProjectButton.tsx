@@ -3,6 +3,7 @@
 import { type Project } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import Button from "./Button";
 
@@ -31,15 +32,18 @@ const DeleteProjectButton = ({ project }: Props) => {
         method: "DELETE",
       });
 
-      if (!response.ok) {
-        setIsDeleting(false);
-        return;
+      if (response.ok) {
+        router.push("/app");
+        toast.success("Successfully deleted project");
+      } else {
+        toast.error("There has been an error while deleting the project.");
       }
-
-      router.push("/app");
     } catch (error) {
-      setIsDeleting(false);
+      toast.error("There has been an error while deleting the project.");
+      console.error(error);
     }
+
+    setIsDeleting(false);
   };
 
   return (

@@ -5,6 +5,7 @@ import { type Project } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { FaSave, FaSpinner } from "react-icons/fa";
 import slugify from "slugify";
 import Button from "./Button";
@@ -16,8 +17,8 @@ interface Props {
 }
 
 interface FormValues {
-  name: string;
-  slug: string;
+  name: Project["name"];
+  slug: Project["slug"];
 }
 
 const CreateProjectModal = ({ isOpen, onRequestClose }: Props) => {
@@ -37,12 +38,19 @@ const CreateProjectModal = ({ isOpen, onRequestClose }: Props) => {
         }),
       });
 
-      const createdProject = (await response.json()) as Project;
-
-      router.push(`/app/project/${createdProject.slug}`);
+      if (response.ok) {
+        const createdProject = (await response.json()) as Project;
+        router.push(`/app/project/${createdProject.slug}`);
+        toast.success("Successfully created project");
+      } else {
+        toast.error("There has been an error while creating the project.");
+      }
     } catch (error) {
-      setIsCreating(false);
+      toast.error("There has been an error while creating the project.");
+      console.error(error);
     }
+
+    setIsCreating(false);
   };
 
   watch((data, { name }) => {

@@ -1,5 +1,4 @@
 import { type Project } from "@prisma/client";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 import {
   FaChevronRight,
@@ -8,7 +7,6 @@ import {
   FaUserAlt,
   FaUsers,
 } from "react-icons/fa";
-import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import Account from "./Account";
 import Avatar from "./Avatar";
@@ -20,7 +18,6 @@ interface Props {
 }
 
 const Sidebar = async ({ project }: Props) => {
-  const session = await getServerSession(authOptions)!;
   const projects = await prisma.project.findMany();
 
   return (

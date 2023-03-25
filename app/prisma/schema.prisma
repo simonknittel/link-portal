@@ -20,6 +20,8 @@ model Link {
     LinkUserKeyValue LinkUserKeyValue[]
     projectId        String
     project          Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+    @@unique([projectId, title])
 }
 
 model Tag {
@@ -29,6 +31,8 @@ model Tag {
     links       Link[]
     projectId   String
     project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+    @@unique([projectId, title])
 }
 
 model LinkUserKeyValue {

@@ -4,6 +4,7 @@ import { type Project } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { FaPlusSquare, FaSpinner } from "react-icons/fa";
 import Button from "./Button";
 
@@ -35,13 +36,17 @@ const AddProjectMember = ({ projectId }: Props) => {
       });
 
       if (response.ok) {
-        reset();
         router.refresh();
+        reset();
+        toast.success("Successfully invited project member");
       } else {
-        // TODO
+        toast.error(
+          "There has been an error while inviting the project member."
+        );
       }
     } catch (error) {
-      // TODO
+      toast.error("There has been an error while inviting the project member.");
+      console.error(error);
     }
 
     setIsAdding(false);

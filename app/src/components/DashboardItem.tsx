@@ -1,15 +1,16 @@
-import { type ReactNode } from "react";
+import { type Link } from "@prisma/client";
 import Avatar from "./Avatar";
 import FavouriteButton from "./FavouriteButton";
 
 interface Props {
-  title: string;
-  description: ReactNode;
-  href: string;
+  link: Link;
   isFavourite?: boolean;
 }
 
-const DashboardItem = ({ title, description, href, isFavourite }: Props) => {
+const DashboardItem = ({
+  link: { title, description, href },
+  isFavourite,
+}: Props) => {
   return (
     <li>
       <a

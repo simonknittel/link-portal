@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FaUsers } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
-import DASHBOARD_ITEMS from "~/dashboard-items";
+import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";
 
 interface Params {
@@ -27,24 +27,19 @@ interface Props {
 }
 
 export default async function Page({ params }: Props) {
-  const project = await getProjectBySlug(params.projectSlug);
-  if (!project) notFound();
-
-  const tagSet = new Set<string>();
-
-  DASHBOARD_ITEMS.forEach((item) => {
-    item.tags.forEach((tag) => tagSet.add(tag));
+  const project = await prisma.project.findUnique({
+    where: {
+      slug: params.projectSlug,
+    },
+    include: {
+      tags: {
+        include: {
+          links: true,
+        },
+      },
+    },
   });
-
-  const tagArray = Array.from(tagSet);
-  const sortedTagArray = tagArray.sort((a, b) => a.localeCompare(b, "de-DE"));
-
-  const sections = sortedTagArray.map((tag) => ({
-    title: tag,
-    items: DASHBOARD_ITEMS.filter((item) => item.tags.includes(tag)).sort(
-      (a, b) => a.title.localeCompare(b.title, "de-DE")
-    ),
-  }));
+  if (!project) notFound();
 
   return (
     <>
@@ -79,17 +74,27 @@ export default async function Page({ params }: Props) {
           </ul>
         </section> */}
 
-        {sections.map((section) => (
-          <section key={section.title} className="mt-8">
-            <h3 className="mb-4 text-xl font-bold">{section.title}</h3>
+        {project.tags
+          .sort((a, b) => a.title.localeCompare(b.title))
+          .map((tag) => (
+            <section key={tag.title} className="mt-8">
+              <h3 className="mb-4 text-xl font-bold">{tag.title}</h3>
 
-            <ul className="grid grid-cols-4 gap-2">
-              {section.items.map((item) => (
-                <DashboardItem key={item.title} {...item} />
-              ))}
-            </ul>
-          </section>
-        ))}
+              {tag.links.length > 0 ? (
+                <ul className="grid grid-cols-4 gap-2">
+                  {tag.links
+                    .sort((a, b) => a.title.localeCompare(b.title))
+                    .map((link) => (
+                      <DashboardItem key={link.title} link={link} />
+                    ))}
+                </ul>
+              ) : (
+                <p className="italic text-slate-500">
+                  This tag doesn&apos;t have any links yet.
+                </p>
+              )}
+            </section>
+          ))}
       </main>
     </>
   );

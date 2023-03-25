@@ -1,6 +1,5 @@
 import { type Metadata } from "next";
 import { FaStar, FaUserAlt } from "react-icons/fa";
-import DashboardItem from "~/components/DashboardItem";
 import Sidebar from "~/components/Sidebar";
 
 export const metadata: Metadata = {
@@ -26,18 +25,11 @@ export default function Page() {
             Your favourites
           </h3>
 
-          <ul className="grid grid-cols-4 gap-2">
-            <DashboardItem
-              href="https://mail.google.com/mail/u/?authuser=hallo@simonknittel.de"
-              title="Gmail"
-              description="Primary email provider"
-              isFavourite={true}
-            />
-          </ul>
+          {/* <ul className="grid grid-cols-4 gap-2"></ul> */}
 
-          {/* <p className="italic text-slate-500">
-              You don&apos;t have any favourites.
-            </p> */}
+          <p className="italic text-slate-500">
+            You don&apos;t have any favourites.
+          </p>
         </section>
       </main>
     </div>

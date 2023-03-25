@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import AnalyticsContainer from "~/components/AnalyticsContainer";
 import ToasterContainer from "~/components/ToasterContainer";
 import "../styles/globals.css";
 
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: Props) {
       <body className="min-h-screen bg-slate-800 text-white">
         {children}
         <ToasterContainer />
+        <AnalyticsContainer />
       </body>
     </html>
   );

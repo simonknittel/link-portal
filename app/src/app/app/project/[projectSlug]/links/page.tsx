@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FaListUl } from "react-icons/fa";
-import CreateLinkModal from "~/components/CreateLinkModal";
+import CreateOrEditLinkModal from "~/components/CreateOrEditLinkModal";
 import LinksTable from "~/components/LinksTable";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";
@@ -51,12 +51,13 @@ export default async function Page({ params }: Props) {
           Links
         </h1>
 
-        <CreateLinkModal projectId={project.id} tags={project.tags} />
+        <CreateOrEditLinkModal projectId={project.id} tags={project.tags} />
       </div>
 
       <div className="bg-slate-700 p-8 rounded mt-8">
         <LinksTable
           links={project.links.sort((a, b) => a.title.localeCompare(b.title))}
+          tags={project.tags}
         />
       </div>
     </main>

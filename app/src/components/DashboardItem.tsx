@@ -1,5 +1,4 @@
 import { type Link } from "@prisma/client";
-import Avatar from "./Avatar";
 import FavouriteButton from "./FavouriteButton";
 
 interface Props {
@@ -8,6 +7,8 @@ interface Props {
 }
 
 const DashboardItem = ({ link, favourited }: Props) => {
+  const imgSrc = new URL(link.href).origin + "/favicon.ico";
+
   return (
     <li>
       <a
@@ -15,7 +16,13 @@ const DashboardItem = ({ link, favourited }: Props) => {
         className="flex h-full gap-4 rounded bg-slate-700 p-4 hover:bg-slate-600"
       >
         <span className="flex-none">
-          <Avatar name={link.title} />
+          <img
+            src={imgSrc}
+            width={64}
+            height={64}
+            alt={`Logo of ${link.title}`}
+          />
+          {/* <Avatar name={link.title} /> */}
         </span>
 
         <div className="flex-1">

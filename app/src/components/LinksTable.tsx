@@ -11,16 +11,18 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Button from "./Button";
+import CreateOrEditLinkModal from "./CreateOrEditLinkModal";
 
 interface Props {
   links: (Link & { tags: Tag[] })[];
+  tags: Tag[];
 }
 
 type Row = Link & { tags: Tag[] };
 
 const columnHelper = createColumnHelper<Row>();
 
-const TagsTable = ({ links }: Props) => {
+const TagsTable = ({ links, tags }: Props) => {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState<Link["id"] | null>(null);
 
@@ -80,6 +82,8 @@ const TagsTable = ({ links }: Props) => {
         id: "actions",
         cell: (props) => (
           <div className="flex justify-end gap-2">
+            <CreateOrEditLinkModal link={props.row.original} tags={tags} />
+
             <Button
               onClick={() => void handleDelete(props.row.original)}
               variant="secondary"

@@ -1,12 +1,28 @@
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { FaStar, FaUserAlt } from "react-icons/fa";
+import DashboardItem from "~/components/DashboardItem";
 import Sidebar from "~/components/Sidebar";
+import { authOptions } from "~/server/auth";
+import { prisma } from "~/server/db";
 
 export const metadata: Metadata = {
   title: "Projects | Link Portal",
 };
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerSession(authOptions);
+  const favourites = await prisma.linkUserKeyValue.findMany({
+    where: {
+      userId: session!.user.id,
+      key: "favourited",
+      value: "true",
+    },
+    include: {
+      link: true,
+    },
+  });
+
   return (
     <div className="min-h-screen">
       <div className="fixed h-screen w-96 overflow-auto bg-slate-900">
@@ -25,11 +41,23 @@ export default function Page() {
             Your favourites
           </h3>
 
-          {/* <ul className="grid grid-cols-4 gap-2"></ul> */}
-
-          <p className="italic text-slate-500">
-            You don&apos;t have any favourites.
-          </p>
+          {favourites.length > 0 ? (
+            <ul className="grid grid-cols-4 gap-2">
+              {favourites
+                .sort((a, b) => a.link.title.localeCompare(b.link.title))
+                .map((item) => (
+                  <DashboardItem
+                    key={item.link.id}
+                    link={item.link}
+                    favourited={true}
+                  />
+                ))}
+            </ul>
+          ) : (
+            <p className="italic text-slate-500">
+              You don&apos;t have any favourites yet.
+            </p>
+          )}
         </section>
       </main>
     </div>

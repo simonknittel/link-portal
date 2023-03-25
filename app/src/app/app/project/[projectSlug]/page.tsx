@@ -1,7 +1,9 @@
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaUsers } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
+import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";
 
@@ -40,6 +42,13 @@ export default async function Page({ params }: Props) {
     },
   });
   if (!project) notFound();
+
+  const session = await getServerSession(authOptions);
+  const linkUserKeyValue = await prisma.linkUserKeyValue.findMany({
+    where: {
+      userId: session!.user.id,
+    },
+  });
 
   return (
     <>
@@ -84,9 +93,22 @@ export default async function Page({ params }: Props) {
                 <ul className="grid grid-cols-4 gap-2">
                   {tag.links
                     .sort((a, b) => a.title.localeCompare(b.title))
-                    .map((link) => (
-                      <DashboardItem key={link.title} link={link} />
-                    ))}
+                    .map((link) => {
+                      const favourited = linkUserKeyValue.some(
+                        (item) =>
+                          item.key === "favourited" &&
+                          item.linkId === link.id &&
+                          item.value === "true"
+                      );
+
+                      return (
+                        <DashboardItem
+                          key={link.id}
+                          link={link}
+                          favourited={favourited}
+                        />
+                      );
+                    })}
                 </ul>
               ) : (
                 <p className="italic text-slate-500">

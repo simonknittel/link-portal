@@ -4,36 +4,33 @@ import FavouriteButton from "./FavouriteButton";
 
 interface Props {
   link: Link;
-  isFavourite?: boolean;
+  favourited?: boolean;
 }
 
-const DashboardItem = ({
-  link: { title, description, href },
-  isFavourite,
-}: Props) => {
+const DashboardItem = ({ link, favourited }: Props) => {
   return (
     <li>
       <a
-        href={href}
+        href={link.href}
         className="flex h-full gap-4 rounded bg-slate-700 p-4 hover:bg-slate-600"
       >
         <span className="flex-none">
-          <Avatar name={title} />
+          <Avatar name={link.title} />
         </span>
 
         <div className="flex-1">
-          <p className="font-bold">{title}</p>
-          <p className="leading-tight mt-2">{description}</p>
+          <p className="font-bold">{link.title}</p>
+          <p className="leading-tight mt-2">{link.description}</p>
           <p
-            title={href}
+            title={link.href}
             className="text-slate-500 leading-tight mt-2 text-xs whitespace-nowrap overflow-hidden text-ellipsis"
           >
-            {href}
+            {link.href}
           </p>
         </div>
 
         <div className="flex-none">
-          <FavouriteButton isFavourite={isFavourite} title={title} />
+          <FavouriteButton link={link} favourited={favourited} />
         </div>
       </a>
     </li>

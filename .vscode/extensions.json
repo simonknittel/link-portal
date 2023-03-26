@@ -6,6 +6,7 @@
 		"bradlc.vscode-tailwindcss",
 		"dbaeumer.vscode-eslint",
 		"dotenv.dotenv-vscode",
-		"prisma.prisma"
+		"prisma.prisma",
+		"hashicorp.terraform"
 	]
 }

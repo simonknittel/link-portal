@@ -1,3 +1,8 @@
+import {
+  type InvitedProjectMember,
+  type Project,
+  type User,
+} from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "~/server/auth";
@@ -8,7 +13,11 @@ export async function POST(request: Request) {
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      projectId: Project["id"];
+      email: string;
+      role: 1 | 2;
+    };
 
     if (
       session.user.projectMemberships.some(
@@ -26,8 +35,17 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      // TODO: Send invite
-      return NextResponse.json({}, { status: 400 });
+      const createdItem = await prisma.invitedProjectMember.create({
+        data: {
+          projectId: body.projectId,
+          email: body.email,
+          role: body.role,
+        },
+      });
+
+      // TODO: Send invite email
+
+      return NextResponse.json(createdItem);
     }
 
     const createdProjectMember = await prisma.projectMember.create({
@@ -50,7 +68,9 @@ export async function DELETE(request: Request) {
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const body = await request.json();
+    const body = (await request.json()) as
+      | { projectId: Project["id"]; userId: User["id"] }
+      | { projectId: Project["id"]; email: InvitedProjectMember["email"] };
 
     // TODO: Check if user is removing himself and there is at least on other admin left
     if (
@@ -62,14 +82,25 @@ export async function DELETE(request: Request) {
     )
       return NextResponse.json({}, { status: 401 });
 
-    await prisma.projectMember.delete({
-      where: {
-        projectId_userId: {
-          projectId: body.projectId,
-          userId: body.userId,
+    if ("userId" in body) {
+      await prisma.projectMember.delete({
+        where: {
+          projectId_userId: {
+            projectId: body.projectId,
+            userId: body.userId,
+          },
         },
-      },
-    });
+      });
+    } else {
+      await prisma.invitedProjectMember.delete({
+        where: {
+          projectId_email: {
+            projectId: body.projectId,
+            email: body.email,
+          },
+        },
+      });
+    }
 
     return NextResponse.json({});
   } catch (error) {

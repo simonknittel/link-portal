@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { FaCog } from "react-icons/fa";
 import AddProjectMember from "~/components/AddProjectMember";
 import DeleteProjectButton from "~/components/DeleteProjectButton";
+import InvitedProjectMembersTable from "~/components/InvitedProjectMembersTable";
 import ProjectMembersTable from "~/components/ProjectMembersTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
@@ -45,14 +46,21 @@ export default async function Page({ params }: Props) {
   )
     notFound();
 
-  const projectMembers = await prisma.projectMember.findMany({
-    where: {
-      projectId: project.id,
-    },
-    include: {
-      user: true,
-    },
-  });
+  const [projectMembers, invitedProjectMembers] = await prisma.$transaction([
+    prisma.projectMember.findMany({
+      where: {
+        projectId: project.id,
+      },
+      include: {
+        user: true,
+      },
+    }),
+    prisma.invitedProjectMember.findMany({
+      where: {
+        projectId: project.id,
+      },
+    }),
+  ]);
 
   return (
     <main className="p-8 pt-24 lg:pt-8">
@@ -70,6 +78,17 @@ export default async function Page({ params }: Props) {
           project={project}
           projectMembers={projectMembers}
         />
+
+        {invitedProjectMembers.length > 0 && (
+          <>
+            <h3 className="font-bold text-xl mt-8">Invites</h3>
+
+            <InvitedProjectMembersTable
+              project={project}
+              invitedProjectMembers={invitedProjectMembers}
+            />
+          </>
+        )}
       </section>
 
       <section className="p-8 bg-red-900 rounded bg-opacity-25 max-w-4xl mt-8">

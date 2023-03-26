@@ -121,7 +121,7 @@ const TagsTable = ({ links, tags }: Props) => {
             {headerGroup.headers.map((header) => (
               <th
                 key={header.id}
-                className="text-left overflow-hidden text-ellipsis whitespace-nowrap"
+                className="text-left overflow-hidden text-ellipsis whitespace-nowrap text-slate-400"
               >
                 {header.isPlaceholder
                   ? null

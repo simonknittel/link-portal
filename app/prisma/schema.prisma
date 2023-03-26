@@ -48,13 +48,14 @@ model LinkUserKeyValue {
 }
 
 model Project {
-    id             String          @id @default(cuid())
-    name           String
-    slug           String          @unique
-    links          Link[]
-    tags           Tag[]
-    projectMembers ProjectMember[]
-    image          String?
+    id                    String                 @id @default(cuid())
+    name                  String
+    slug                  String                 @unique
+    links                 Link[]
+    tags                  Tag[]
+    projectMembers        ProjectMember[]
+    image                 String?
+    invitedProjectMembers InvitedProjectMember[]
 }
 
 model ProjectMember {
@@ -65,6 +66,15 @@ model ProjectMember {
     role      Int     @default(1) // 1 = Member, 2 = Admin
 
     @@id([projectId, userId])
+}
+
+model InvitedProjectMember {
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    role      Int     @default(1) // 1 = Member, 2 = Admin
+    email     String
+
+    @@id([projectId, email])
 }
 
 // Necessary for Next auth

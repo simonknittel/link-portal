@@ -50,6 +50,36 @@ export const authOptions: NextAuthOptions = {
 
       return session;
     },
+
+    async signIn({ user, profile }) {
+      // Update user's email, name and avatar on each login
+      if (profile) {
+        /**
+         * This callback doesn't tell us if the user already exists in the
+         * database. Also, this callback gets called before a new user gets
+         * created in the database. Therefore, we have to figure out ourselves
+         * if we can update an existing user or not. We do this by just trying
+         * with `try ... catch`.
+         */
+        try {
+          // User already exists
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              email: profile.email!.toLocaleLowerCase(),
+              name: profile.name,
+              // TODO: Update avatar
+            },
+          });
+        } catch (error) {
+          // User doesn't exist yet, e.g. first login of a new user -> no update needed
+        }
+      }
+
+      return true;
+    },
   },
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -60,6 +90,23 @@ export const authOptions: NextAuthOptions = {
   ],
   events: {
     async createUser({ user }) {
+      /**
+       * Make sure the email is stored in lowercase
+       */
+      const email = user.email!.toLowerCase();
+
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          email,
+        },
+      });
+
+      /**
+       * Create personal project
+       */
       const slugifiedName = slugify(user.name, {
         lower: true,
         strict: true,
@@ -84,6 +131,31 @@ export const authOptions: NextAuthOptions = {
           role: 2,
         },
       });
+
+      /**
+       * Accept invites
+       */
+      const invitedProjectMembers = await prisma.invitedProjectMember.findMany({
+        where: {
+          email,
+        },
+      });
+
+      await prisma.$transaction([
+        prisma.projectMember.createMany({
+          data: invitedProjectMembers.map((invitedProjectMember) => ({
+            projectId: invitedProjectMember.projectId,
+            userId: user.id,
+            role: invitedProjectMember.role,
+          })),
+        }),
+
+        prisma.invitedProjectMember.deleteMany({
+          where: {
+            email,
+          },
+        }),
+      ]);
     },
   },
 };

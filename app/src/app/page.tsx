@@ -19,7 +19,7 @@ export default async function Page() {
       <main className="w-full max-w-md py-8">
         <h1 className="mb-10 text-center text-6xl">Link Portal</h1>
 
-        <div className="flex flex-col gap-2 rounded bg-slate-700 p-8">
+        <div className="flex flex-col gap-2 rounded bg-slate-700 p-8 mx-8">
           <LoginButtons />
         </div>
       </main>

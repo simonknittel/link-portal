@@ -44,6 +44,7 @@ const ProjectSelectorFlyout = ({ projects, selectedProject }: Props) => {
                 <Link
                   href={`/app/project/${project.slug}`}
                   className="p-4 flex justify-between items-center hover:bg-slate-700 rounded gap-2"
+                  onClick={() => setFlyoutIsOpen(false)}
                 >
                   <Avatar
                     name={project.name}

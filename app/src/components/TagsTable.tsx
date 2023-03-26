@@ -101,7 +101,10 @@ const TagsTable = ({ tags }: Props) => {
             className="grid grid-cols-[1fr_2fr_8rem] items-center gap-4 text-xl"
           >
             {headerGroup.headers.map((header) => (
-              <th key={header.id} className="text-left">
+              <th
+                key={header.id}
+                className="text-left overflow-hidden text-ellipsis whitespace-nowrap"
+              >
                 {header.isPlaceholder
                   ? null
                   : flexRender(
@@ -121,7 +124,10 @@ const TagsTable = ({ tags }: Props) => {
             className="grid grid-cols-[1fr_2fr_8rem] items-center gap-4 hover:bg-slate-600 px-2 h-14 rounded -mx-2 first:mt-2"
           >
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id} className="overflow-hidden text-ellipsis">
+              <td
+                key={cell.id}
+                className="overflow-hidden text-ellipsis whitespace-nowrap"
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}

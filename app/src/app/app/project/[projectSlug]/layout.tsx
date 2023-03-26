@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { type ReactNode } from "react";
 import Sidebar from "~/components/Sidebar";
+import SidebarContainer from "~/components/SidebarContainer";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
@@ -29,11 +30,11 @@ export default async function ProjectLayout({ children, params }: Props) {
 
   return (
     <div className="min-h-screen">
-      <div className="fixed h-screen w-96 overflow-auto bg-slate-900">
+      <SidebarContainer>
         <Sidebar project={project} />
-      </div>
+      </SidebarContainer>
 
-      <div className="ml-96 min-h-screen">{children}</div>
+      <div className="lg:ml-96 min-h-screen">{children}</div>
     </div>
   );
 }

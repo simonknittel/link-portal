@@ -160,7 +160,7 @@ const ProjectMembersTable = ({ project, projectMembers }: Props) => {
             className="grid grid-cols-[1fr_1fr_1fr_8rem] items-center gap-4 hover:bg-slate-600 px-2 h-14 rounded -mx-2 first:mt-2"
           >
             {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
+              <td key={cell.id} className="overflow-hidden text-ellipsis">
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
             ))}

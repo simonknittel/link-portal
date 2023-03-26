@@ -62,7 +62,7 @@ export default async function Page({ params }: Props) {
         <DashboardSearch />
       </div> */}
 
-      <main className="p-8">
+      <main className="p-8 pt-24 lg:pt-8">
         <h1 className="font-bold text-2xl flex items-center gap-4">
           <FaUsers />
           Project dashboard
@@ -74,7 +74,7 @@ export default async function Page({ params }: Props) {
             Most common
           </h3>
 
-          <ul className="grid grid-cols-4 gap-2">
+          <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
             <DashboardItem
               href="https://mail.google.com/mail/u/?authuser=hallo@simonknittel.de"
               title="Gmail"
@@ -96,7 +96,7 @@ export default async function Page({ params }: Props) {
               <h3 className="mb-4 text-xl font-bold">{tag.title}</h3>
 
               {tag.links.length > 0 ? (
-                <ul className="grid grid-cols-4 gap-2">
+                <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
                   {tag.links
                     .sort((a, b) => a.title.localeCompare(b.title))
                     .map((link) => {

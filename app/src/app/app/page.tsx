@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { FaStar, FaUserAlt } from "react-icons/fa";
 import DashboardItem from "~/components/DashboardItem";
 import Sidebar from "~/components/Sidebar";
+import SidebarContainer from "~/components/SidebarContainer";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
@@ -25,11 +26,11 @@ export default async function Page() {
 
   return (
     <div className="min-h-screen">
-      <div className="fixed h-screen w-96 overflow-auto bg-slate-900">
+      <SidebarContainer>
         <Sidebar />
-      </div>
+      </SidebarContainer>
 
-      <main className="ml-96 min-h-screen p-8">
+      <main className="lg:ml-96 min-h-screen p-8 pt-24 lg:pt-8">
         <h1 className="font-bold text-2xl flex items-center gap-4">
           <FaUserAlt />
           Personal dashboard
@@ -42,7 +43,7 @@ export default async function Page() {
           </h3>
 
           {favourites.length > 0 ? (
-            <ul className="grid grid-cols-4 gap-2">
+            <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
               {favourites
                 .sort((a, b) => a.link.title.localeCompare(b.link.title))
                 .map((item) => (

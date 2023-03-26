@@ -1,0 +1,42 @@
+"use client";
+
+import clsx from "clsx";
+import { useState, type ReactNode } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
+import Button from "./Button";
+
+interface Props {
+  children?: ReactNode;
+}
+
+const SidebarContainer = ({ children }: Props) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <>
+      <div className="fixed top-0 left-0 right-0 h-16 bg-slate-900 flex items-center px-2 z-20 lg:hidden">
+        <Button
+          variant="secondary"
+          iconOnly={true}
+          onClick={() => setIsVisible((value) => !value)}
+        >
+          {isVisible ? <FaTimes /> : <FaBars />}
+        </Button>
+      </div>
+
+      <div
+        className={clsx(
+          "fixed top-16 bottom-0 lg:top-0 w-96 overflow-auto bg-slate-900 -translate-x-full lg:translate-x-0 z-10",
+          {
+            "-translate-x-full": isVisible === false,
+            "translate-x-0": isVisible === true,
+          }
+        )}
+      >
+        {children}
+      </div>
+    </>
+  );
+};
+
+export default SidebarContainer;

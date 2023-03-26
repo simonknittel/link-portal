@@ -55,7 +55,7 @@ export default async function Page({ params }: Props) {
   });
 
   return (
-    <main className="p-8">
+    <main className="p-8 pt-24 lg:pt-8">
       <h1 className="font-bold text-2xl flex items-center gap-4">
         <FaCog />
         Project settings

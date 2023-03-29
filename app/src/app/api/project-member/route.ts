@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { sendInviteEmail } from "~/server/mail";
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -43,7 +44,13 @@ export async function POST(request: Request) {
         },
       });
 
-      // TODO: Send invite email
+      const project = await prisma.project.findUnique({
+        where: {
+          id: body.projectId,
+        },
+      });
+
+      await sendInviteEmail(body.email, project!, session.user);
 
       return NextResponse.json(createdItem);
     }

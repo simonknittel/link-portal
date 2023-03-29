@@ -20,5 +20,15 @@ vercel_environment_variables = [
     key    = "GITHUB_SECRET"
     target = ["production", "preview"]
     value  = ""
+  },
+  {
+    key    = "MAILGUN_API_KEY"
+    target = ["production", "preview"]
+    value  = ""
+  },
+  {
+    key    = "MAILGUN_DOMAIN"
+    target = ["production", "preview"]
+    value  = ""
   }
 ]

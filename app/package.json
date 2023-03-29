@@ -16,6 +16,8 @@
     "@tanstack/react-table": "^8.7.9",
     "@vercel/analytics": "^0.1.11",
     "clsx": "^1.2.1",
+    "form-data": "^4.0.0",
+    "mailgun.js": "^8.2.1",
     "next": "^13.2.1",
     "next-auth": "^4.19.0",
     "react": "18.2.0",

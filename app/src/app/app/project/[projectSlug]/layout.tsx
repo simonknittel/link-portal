@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { type ReactNode } from "react";
-import Sidebar from "~/components/Sidebar";
-import SidebarContainer from "~/components/SidebarContainer";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import Sidebar from "../../components/Sidebar";
+import SidebarContainer from "../../components/SidebarContainer";
 
 interface Props {
   children: ReactNode;

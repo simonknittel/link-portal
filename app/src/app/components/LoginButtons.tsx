@@ -3,7 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
-import Button from "./Button";
+import Button from "../../components/Button";
 
 const LoginButtons = () => {
   const [isLoggingIn, setIsLoggingIn] = useState<string | null>(null);

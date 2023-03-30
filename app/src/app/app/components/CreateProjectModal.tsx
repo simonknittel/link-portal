@@ -8,8 +8,8 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FaSave, FaSpinner } from "react-icons/fa";
 import slugify from "slugify";
-import Button from "./Button";
-import Modal from "./Modal";
+import Button from "~/components/Button";
+import Modal from "~/components/Modal";
 
 interface Props {
   isOpen: boolean;

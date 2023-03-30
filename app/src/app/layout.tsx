@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
-import AnalyticsContainer from "~/components/AnalyticsContainer";
-import ToasterContainer from "~/components/ToasterContainer";
+import AnalyticsContainer from "~/app/components/AnalyticsContainer";
+import ToasterContainer from "~/app/components/ToasterContainer";
 import "../styles/globals.css";
 
 interface Props {

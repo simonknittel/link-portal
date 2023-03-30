@@ -7,9 +7,9 @@ import {
   FaUserAlt,
   FaUsers,
 } from "react-icons/fa";
+import Avatar from "~/components/Avatar";
 import { prisma } from "~/server/db";
 import Account from "./Account";
-import Avatar from "./Avatar";
 import CreateProjectButton from "./CreateProjectButton";
 import ProjectSelector from "./ProjectSelector";
 

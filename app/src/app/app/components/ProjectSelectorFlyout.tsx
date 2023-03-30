@@ -5,8 +5,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
-import Avatar from "./Avatar";
-import Button from "./Button";
+import Avatar from "~/components/Avatar";
+import Button from "~/components/Button";
 import CreateProjectButton from "./CreateProjectButton";
 
 interface Props {

@@ -1,6 +1,6 @@
 import { type Project } from "@prisma/client";
+import Avatar from "~/components/Avatar";
 import { prisma } from "~/server/db";
-import Avatar from "./Avatar";
 import ProjectSelectorFlyout from "./ProjectSelectorFlyout";
 
 interface Props {

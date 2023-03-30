@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { FaSpinner, FaTrash } from "react-icons/fa";
-import Button from "./Button";
+import Button from "../../../../../../components/Button";
 
 interface Props {
   project: Project;

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  type InvitedProjectMember,
-  type Project,
-  type User,
-} from "@prisma/client";
+import { type Project, type ProjectMember, type User } from "@prisma/client";
 import {
   createColumnHelper,
   flexRender,
@@ -14,30 +10,28 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
-import Button from "./Button";
+import Avatar from "../../../../../../components/Avatar";
+import Button from "../../../../../../components/Button";
 
 interface Props {
   project: Project;
-  invitedProjectMembers: InvitedProjectMember[];
+  projectMembers: (ProjectMember & { user: User })[];
 }
 
-type Row = InvitedProjectMember;
+type Row = ProjectMember & { user: User };
 
 const columnHelper = createColumnHelper<Row>();
 
-const InvitedProjectMembersTable = ({
-  project,
-  invitedProjectMembers,
-}: Props) => {
+const ProjectMembersTable = ({ project, projectMembers }: Props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<User["id"] | null>(null);
 
-  const handleRemove = async (invitedProjectMember: InvitedProjectMember) => {
-    setIsLoading(invitedProjectMember.email);
+  const handleRemove = async (user: User) => {
+    setIsLoading(user.id);
 
     try {
       const confirmation = window.confirm(
-        `You are about to remove "${invitedProjectMember.email}" from project "${project.name}". Do you want to continue?`
+        `You are about to remove "${user.name}" from project "${project.name}". Do you want to continue?`
       );
 
       if (!confirmation) {
@@ -49,7 +43,7 @@ const InvitedProjectMembersTable = ({
         method: "DELETE",
         body: JSON.stringify({
           projectId: project.id,
-          email: invitedProjectMember.email,
+          userId: user.id,
         }),
       });
 
@@ -63,7 +57,22 @@ const InvitedProjectMembersTable = ({
 
   const columns = useMemo(() => {
     return [
-      columnHelper.accessor("email", {
+      columnHelper.accessor("user.name", {
+        header: "Name",
+        cell: (props) => {
+          return (
+            <div className="flex gap-2 items-center">
+              <Avatar
+                name={props.getValue()}
+                image={props.row.original.user.image}
+                size={32}
+              />
+              {props.getValue()}
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("user.email", {
         header: "Email address",
         cell: (props) => props.getValue(),
       }),
@@ -84,41 +93,51 @@ const InvitedProjectMembersTable = ({
       }),
       columnHelper.display({
         id: "actions",
-        cell: (props) => (
-          <div className="flex justify-end gap-2">
-            <Button
-              onClick={() => void handleRemove(props.row.original)}
-              variant="secondary"
-              title={`Remove user "${props.row.original.email}" from project "${project.name}"`}
-              aria-label={`Remove user "${props.row.original.email}" from project "${project.name}"`}
-              iconOnly={true}
-              disabled={Boolean(isLoading)}
-            >
-              {isLoading === props.row.original.email ? (
-                <FaSpinner className="animate-spin" />
-              ) : (
-                <FaRegTrashAlt />
-              )}
-            </Button>
-          </div>
-        ),
+        cell: (props) => {
+          const adminCount = projectMembers.reduce(
+            (count, projectMember) =>
+              projectMember.role === 2 ? count + 1 : count,
+            0
+          );
+
+          if (adminCount < 2 && props.row.original.role === 2) return null;
+
+          return (
+            <div className="flex justify-end gap-2">
+              <Button
+                onClick={() => void handleRemove(props.row.original.user)}
+                variant="secondary"
+                title={`Remove user "${props.row.original.user.name}" from project "${project.name}"`}
+                aria-label={`Remove user "${props.row.original.user.name}" from project "${project.name}"`}
+                iconOnly={true}
+                disabled={Boolean(isLoading)}
+              >
+                {isLoading === props.row.original.userId ? (
+                  <FaSpinner className="animate-spin" />
+                ) : (
+                  <FaRegTrashAlt />
+                )}
+              </Button>
+            </div>
+          );
+        },
       }),
     ];
-  }, [invitedProjectMembers.length, project.name, isLoading]);
+  }, [projectMembers.length, project.name, isLoading]);
 
   const table = useReactTable({
-    data: invitedProjectMembers,
+    data: projectMembers,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
-    <table className="mt-4 w-full">
+    <table className="mt-8 w-full">
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr
             key={headerGroup.id}
-            className="grid grid-cols-[1fr_1fr_8rem] items-center gap-4"
+            className="grid grid-cols-[1fr_1fr_1fr_8rem] items-center gap-4"
           >
             {headerGroup.headers.map((header) => (
               <th key={header.id} className="text-left text-slate-400">
@@ -138,7 +157,7 @@ const InvitedProjectMembersTable = ({
         {table.getRowModel().rows.map((row) => (
           <tr
             key={row.id}
-            className="grid grid-cols-[1fr_1fr_8rem] items-center gap-4 hover:bg-slate-600 px-2 h-14 rounded -mx-2 first:mt-2"
+            className="grid grid-cols-[1fr_1fr_1fr_8rem] items-center gap-4 hover:bg-slate-600 px-2 h-14 rounded -mx-2 first:mt-2"
           >
             {row.getVisibleCells().map((cell) => (
               <td key={cell.id} className="overflow-hidden text-ellipsis">
@@ -152,4 +171,4 @@ const InvitedProjectMembersTable = ({
   );
 };
 
-export default InvitedProjectMembersTable;
+export default ProjectMembersTable;

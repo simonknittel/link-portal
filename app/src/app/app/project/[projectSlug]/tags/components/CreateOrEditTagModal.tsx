@@ -3,9 +3,9 @@
 import { type Project, type Tag } from "@prisma/client";
 import { useState } from "react";
 import { FaEdit, FaPlus } from "react-icons/fa";
-import Button from "./Button";
+import Button from "../../../../../../components/Button";
+import Modal from "../../../../../../components/Modal";
 import CreateOrEditTagForm from "./CreateOrEditTagForm";
-import Modal from "./Modal";
 
 interface NewProps {
   projectId: Project["id"];

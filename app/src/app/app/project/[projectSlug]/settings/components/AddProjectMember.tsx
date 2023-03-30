@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { FaPlusSquare, FaSpinner } from "react-icons/fa";
-import Button from "./Button";
+import Button from "../../../../../../components/Button";
 
 interface Props {
   projectId: Project["id"];

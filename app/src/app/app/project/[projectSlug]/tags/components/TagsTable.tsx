@@ -10,7 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
-import Button from "./Button";
+import Button from "../../../../../../components/Button";
 import CreateOrEditTagModal from "./CreateOrEditTagModal";
 
 interface Props {

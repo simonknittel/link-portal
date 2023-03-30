@@ -2,7 +2,7 @@ import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaUsers } from "react-icons/fa";
-import DashboardItem from "~/components/DashboardItem";
+import DashboardItem from "~/app/app/components/DashboardItem";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "~/server/services/project";

@@ -1,22 +1,19 @@
 "use client";
 
-import { type Link, type Project, type Tag } from "@prisma/client";
+import { type Project, type Tag } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { FaEdit, FaSave, FaSpinner } from "react-icons/fa";
-import Button from "./Button";
+import Button from "../../../../../../components/Button";
 
 interface FormValues {
-  title: Link["title"];
-  description: Link["description"];
-  href: Link["href"];
-  tagIds: Tag["id"][];
+  title: Tag["title"];
+  description: Tag["description"];
 }
 
 interface BaseProps {
-  tags: Tag[];
   handleSuccess?: () => void;
 }
 
@@ -25,35 +22,31 @@ interface NewProps {
 }
 
 interface EditProps {
-  link: Link & {
-    tags: Tag[];
-  };
+  tag: Tag;
 }
 
 type Props = (NewProps | EditProps) & BaseProps;
 
-const CreateOrEditLinkForm = (props: Props) => {
+const CreateOrEditTagForm = (props: Props) => {
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: async () => {
-      if ("link" in props) {
+      if ("tag" in props) {
         try {
-          const response = await fetch(`/api/link/${props.link.id}`);
+          const response = await fetch(`/api/tag/${props.tag.id}`);
 
           if (response.ok) {
-            const data = (await response.json()) as Link & { tags: Tag[] };
+            const data = (await response.json()) as Tag;
 
             return {
               title: data.title,
               description: data.description || "",
-              href: data.href,
-              tagIds: data.tags.map((tag) => tag.id),
             };
           } else {
-            toast.error("There has been an error retrieving the link data.");
+            toast.error("There has been an error retrieving the tag data.");
           }
         } catch (error) {
-          toast.error("There has been an error retrieving the link data.");
+          toast.error("There has been an error retrieving the tag data.");
           console.error(error);
         }
       }
@@ -61,8 +54,6 @@ const CreateOrEditLinkForm = (props: Props) => {
       return {
         title: "",
         description: "",
-        href: "",
-        tagIds: [],
       };
     },
   });
@@ -73,51 +64,47 @@ const CreateOrEditLinkForm = (props: Props) => {
 
     if ("projectId" in props) {
       try {
-        const response = await fetch("/api/links", {
+        const response = await fetch("/api/tags", {
           method: "POST",
           body: JSON.stringify({
             projectId: props.projectId,
             title: data.title,
             description: data.description,
-            href: data.href,
-            tagIds: data.tagIds,
           }),
         });
 
         if (response.ok) {
-          toast.success("Successfully created link");
+          toast.success("Tag successfully created");
           router.refresh();
           props.handleSuccess?.();
           reset();
         } else {
-          toast.error("There has been an error while creating the link.");
+          toast.error("There has been an issue creating the tag.");
         }
       } catch (error) {
-        toast.error("There has been an error while creating the link.");
+        toast.error("There has been an issue creating the tag.");
         console.error(error);
       }
     } else {
       try {
-        const response = await fetch(`/api/link/${props.link.id}`, {
+        const response = await fetch(`/api/tag/${props.tag.id}`, {
           method: "PATCH",
           body: JSON.stringify({
             title: data.title,
             description: data.description,
-            href: data.href,
-            tagIds: data.tagIds,
           }),
         });
 
         if (response.ok) {
-          toast.success("Successfully updated link");
+          toast.success("Tag successfully updated");
           router.refresh();
           props.handleSuccess?.();
           reset();
         } else {
-          toast.error("There has been an error while updating the link.");
+          toast.error("There has been an issue updating the tag.");
         }
       } catch (error) {
-        toast.error("There has been an error while updating the link.");
+        toast.error("There has been an issue updating the tag.");
         console.error(error);
       }
     }
@@ -128,11 +115,7 @@ const CreateOrEditLinkForm = (props: Props) => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* <div className="mt-4">
-            <Avatar />
-          </div> */}
-
-      <label className="block mt-4">Title</label>
+      <label className="mt-4 block">Title</label>
       <input
         className="h-11 w-full rounded bg-slate-600 px-4"
         {...register("title", { required: true })}
@@ -144,29 +127,6 @@ const CreateOrEditLinkForm = (props: Props) => {
         className="h-11 w-full rounded bg-slate-600 px-4"
         {...register("description")}
       />
-
-      <label className="mt-4 block">Href</label>
-      <input
-        className="h-11 w-full rounded bg-slate-600 px-4"
-        {...register("href", { required: true })}
-        type="url"
-      />
-
-      <label className="mt-4 block">Tags</label>
-      <select
-        className="w-full rounded bg-slate-600 p-4"
-        {...register("tagIds")}
-        multiple
-        size={5}
-      >
-        {props.tags
-          .sort((a, b) => a.title.localeCompare(b.title))
-          .map((tag) => (
-            <option key={tag.id} value={tag.id}>
-              {tag.title}
-            </option>
-          ))}
-      </select>
 
       <div className="flex justify-end mt-4">
         <Button type="submit" disabled={isLoading}>
@@ -187,4 +147,4 @@ const CreateOrEditLinkForm = (props: Props) => {
   );
 };
 
-export default CreateOrEditLinkForm;
+export default CreateOrEditTagForm;

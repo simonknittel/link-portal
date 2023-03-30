@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { z, ZodError } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
@@ -7,14 +8,18 @@ interface Params {
   id: string;
 }
 
+const getSchema = z.string().cuid2();
+
 export async function GET(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
+    const data = await getSchema.parseAsync(params.id);
+
     const item = await prisma.link.findUnique({
       where: {
-        id: params.id,
+        id: data,
       },
       include: {
         tags: true,
@@ -32,10 +37,27 @@ export async function GET(request: Request, { params }: { params: Params }) {
 
     return NextResponse.json(item);
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: "Invalid request params",
+          errors: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json({}, { status: 500 });
   }
 }
+
+const patchSchema = z.object({
+  title: z.string().min(1).max(255),
+  description: z.string().max(255).optional(),
+  href: z.string().url(),
+  tagIds: z.array(z.string().cuid2()).optional(),
+});
 
 export async function PATCH(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
@@ -57,37 +79,52 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
     )
       return NextResponse.json({}, { status: 401 });
 
-    const body = await request.json();
+    const body: unknown = await request.json();
+    const data = await patchSchema.parseAsync(body);
 
     await prisma.link.update({
       where: {
         id: params.id,
       },
       data: {
-        title: body.title,
-        description: body.description,
-        href: body.href,
+        title: data.title,
+        description: data.description,
+        href: data.href,
         tags: {
-          set: body.tagIds.map((tagId) => ({ id: tagId })),
+          set: data.tagIds?.map((tagId) => ({ id: tagId })),
         },
       },
     });
 
     return NextResponse.json({});
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: "Invalid request body",
+          errors: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json({}, { status: 500 });
   }
 }
+
+const deleteSchema = z.string().cuid2();
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
+    const data = await deleteSchema.parseAsync(params.id);
+
     const item = await prisma.link.findUnique({
       where: {
-        id: params.id,
+        id: data,
       },
     });
 
@@ -108,6 +145,16 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
 
     return NextResponse.json({});
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: "Invalid request params",
+          errors: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json({}, { status: 500 });
   }

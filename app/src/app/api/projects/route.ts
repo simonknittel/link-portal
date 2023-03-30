@@ -1,19 +1,26 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { z, ZodError } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+
+const postSchema = z.object({
+  name: z.string(),
+  slug: z.string(),
+});
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const body = await request.json();
+    const body: unknown = await request.json();
+    const data = await postSchema.parseAsync(body);
 
     const createdProject = await prisma.project.create({
       data: {
-        name: body.name,
-        slug: body.slug,
+        name: data.name,
+        slug: data.slug,
       },
     });
 
@@ -27,6 +34,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json(createdProject);
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: "Invalid request body",
+          errors: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json({}, { status: 500 });
   }

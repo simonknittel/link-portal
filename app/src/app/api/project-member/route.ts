@@ -1,29 +1,28 @@
-import {
-  type InvitedProjectMember,
-  type Project,
-  type User,
-} from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { z, ZodError } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { sendInviteEmail } from "~/server/mail";
+
+const postSchema = z.object({
+  projectId: z.string().cuid2(),
+  email: z.string().email(),
+  role: z.union([z.literal(1), z.literal(2)]),
+});
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const body = (await request.json()) as {
-      projectId: Project["id"];
-      email: string;
-      role: 1 | 2;
-    };
+    const body: unknown = await request.json();
+    const data = await postSchema.parseAsync(body);
 
     if (
       session.user.projectMemberships.some(
         (projectMembership) =>
-          projectMembership.projectId === body.projectId &&
+          projectMembership.projectId === data.projectId &&
           projectMembership.role === 2
       ) === false
     )
@@ -31,70 +30,90 @@ export async function POST(request: Request) {
 
     const user = await prisma.user.findUnique({
       where: {
-        email: body.email,
+        email: data.email,
       },
     });
 
     if (!user) {
       const createdItem = await prisma.invitedProjectMember.create({
         data: {
-          projectId: body.projectId,
-          email: body.email,
-          role: body.role,
+          projectId: data.projectId,
+          email: data.email,
+          role: data.role,
         },
       });
 
       const project = await prisma.project.findUnique({
         where: {
-          id: body.projectId,
+          id: data.projectId,
         },
       });
 
-      await sendInviteEmail(body.email, project!, session.user);
+      await sendInviteEmail(data.email, project!, session.user);
 
       return NextResponse.json(createdItem);
     }
 
     const createdProjectMember = await prisma.projectMember.create({
       data: {
-        projectId: body.projectId,
+        projectId: data.projectId,
         userId: user.id,
-        role: body.role,
+        role: data.role,
       },
     });
 
     return NextResponse.json(createdProjectMember);
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: "Invalid request body",
+          errors: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json({}, { status: 500 });
   }
 }
+
+const deleteSchema = z.union([
+  z.object({
+    projectId: z.string().cuid2(),
+    userId: z.string().cuid2(),
+  }),
+  z.object({
+    projectId: z.string().cuid2(),
+    email: z.string().email(),
+  }),
+]);
 
 export async function DELETE(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const body = (await request.json()) as
-      | { projectId: Project["id"]; userId: User["id"] }
-      | { projectId: Project["id"]; email: InvitedProjectMember["email"] };
+    const body: unknown = await request.json();
+    const data = await deleteSchema.parseAsync(body);
 
     // TODO: Check if user is removing himself and there is at least on other admin left
     if (
       session.user.projectMemberships.some(
         (projectMembership) =>
-          projectMembership.projectId === body.projectId &&
+          projectMembership.projectId === data.projectId &&
           projectMembership.role === 2
       ) === false
     )
       return NextResponse.json({}, { status: 401 });
 
-    if ("userId" in body) {
+    if ("userId" in data) {
       await prisma.projectMember.delete({
         where: {
           projectId_userId: {
-            projectId: body.projectId,
-            userId: body.userId,
+            projectId: data.projectId,
+            userId: data.userId,
           },
         },
       });
@@ -102,8 +121,8 @@ export async function DELETE(request: Request) {
       await prisma.invitedProjectMember.delete({
         where: {
           projectId_email: {
-            projectId: body.projectId,
-            email: body.email,
+            projectId: data.projectId,
+            email: data.email,
           },
         },
       });
@@ -111,6 +130,16 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({});
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: "Invalid request body",
+          errors: error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json({}, { status: 500 });
   }

@@ -8,18 +8,18 @@ interface Params {
   id: string;
 }
 
-const getSchema = z.string().cuid2();
+const getParamsSchema = z.string().cuid2();
 
 export async function GET(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const data = await getSchema.parseAsync(params.id);
+    const paramsData = await getParamsSchema.parseAsync(params.id);
 
     const item = await prisma.link.findUnique({
       where: {
-        id: data,
+        id: paramsData,
       },
       include: {
         tags: true,
@@ -113,18 +113,18 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   }
 }
 
-const deleteSchema = z.string().cuid2();
+const deleteParamsSchema = z.string().cuid2();
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
-    const data = await deleteSchema.parseAsync(params.id);
+    const paramsData = await deleteParamsSchema.parseAsync(params.id);
 
     const item = await prisma.link.findUnique({
       where: {
-        id: data,
+        id: paramsData,
       },
     });
 

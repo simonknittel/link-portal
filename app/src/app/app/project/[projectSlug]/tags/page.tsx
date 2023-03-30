@@ -6,7 +6,6 @@ import CreateOrEditTagModal from "~/app/app/project/[projectSlug]/tags/component
 import TagsTable from "~/app/app/project/[projectSlug]/tags/components/TagsTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { getProjectBySlug } from "~/server/services/project";
 
 interface Params {
   projectSlug: string;
@@ -17,7 +16,11 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const project = await getProjectBySlug(params.projectSlug);
+  const project = await prisma.project.findUnique({
+    where: {
+      slug: params.projectSlug,
+    },
+  });
   if (!project) return {};
 
   return {

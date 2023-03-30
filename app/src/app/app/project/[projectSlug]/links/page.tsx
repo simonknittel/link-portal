@@ -6,7 +6,6 @@ import CreateOrEditLinkModal from "~/app/app/project/[projectSlug]/links/compone
 import LinksTable from "~/app/app/project/[projectSlug]/links/components/LinksTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { getProjectBySlug } from "~/server/services/project";
 
 interface Params {
   projectSlug: string;
@@ -17,7 +16,11 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const project = await getProjectBySlug(params.projectSlug);
+  const project = await prisma.project.findUnique({
+    where: {
+      slug: params.projectSlug,
+    },
+  });
   if (!project) return {};
 
   return {

@@ -8,7 +8,6 @@ import InvitedProjectMembersTable from "~/app/app/project/[projectSlug]/settings
 import ProjectMembersTable from "~/app/app/project/[projectSlug]/settings/components/ProjectMembersTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { getProjectBySlug } from "~/server/services/project";
 
 interface Params {
   projectSlug: string;
@@ -19,7 +18,11 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const project = await getProjectBySlug(params.projectSlug);
+  const project = await prisma.project.findUnique({
+    where: {
+      slug: params.projectSlug,
+    },
+  });
   if (!project) return {};
 
   return {

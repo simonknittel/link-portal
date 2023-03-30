@@ -7,6 +7,8 @@
 		"dbaeumer.vscode-eslint",
 		"dotenv.dotenv-vscode",
 		"prisma.prisma",
-		"hashicorp.terraform"
+		"hashicorp.terraform",
+		"ms-playwright.playwright",
+		"github.vscode-github-actions"
 	]
 }

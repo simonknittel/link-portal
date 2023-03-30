@@ -17,9 +17,9 @@ export async function sendInviteEmail(
   invitee: User
 ) {
   await mg.messages.create(env.MAILGUN_DOMAIN, {
-    from: `Link-Portal <noreply@${env.MAILGUN_DOMAIN}>`,
+    from: `Link Portal <noreply@${env.MAILGUN_DOMAIN}>`,
     to,
-    subject: "You have been invited to a project | Link-Portal",
+    subject: "You have been invited to a project | Link Portal",
     template: "invite_link-portal",
     "h:X-Mailgun-Variables": JSON.stringify({
       inviteeName: invitee.name,

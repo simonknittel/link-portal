@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
+import errorHandler from "~/app/api/errorHandler";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
@@ -15,10 +16,16 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(request: Request, { params }: { params: Params }) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Validate the request params
+     */
     const paramsData = await paramsSchema.parseAsync(params.id);
 
     const item = await prisma.link.findUnique({
@@ -27,7 +34,10 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
       },
     });
 
-    if (!item) return NextResponse.json({}, { status: 404 });
+    /**
+     * Make sure the item exists.
+     */
+    if (!item) throw new Error("Not found");
 
     if (
       session.user.projectMemberships.some(
@@ -36,7 +46,14 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
     )
       return NextResponse.json({}, { status: 401 });
 
+    /**
+     * Get the request body
+     */
     const body: unknown = await request.json();
+
+    /**
+     * Validate the request body
+     */
     const data = await patchSchema.parseAsync(body);
 
     const newValue = data.favourited ? "true" : "false";
@@ -62,17 +79,6 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
 
     return NextResponse.json(createdItem);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request params or body",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }

@@ -1,8 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { authorize } from "../../authorize";
+import errorHandler from "../../errorHandler";
 
 interface Params {
   id: string;
@@ -11,10 +13,16 @@ interface Params {
 const getParamsSchema = z.string().cuid2();
 
 export async function GET(request: Request, { params }: { params: Params }) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Validate the request params
+     */
     const paramsData = await getParamsSchema.parseAsync(params.id);
 
     const item = await prisma.link.findUnique({
@@ -26,29 +34,24 @@ export async function GET(request: Request, { params }: { params: Params }) {
       },
     });
 
-    if (!item) return NextResponse.json({}, { status: 404 });
+    /**
+     * Make sure the item exists.
+     */
+    if (!item) throw new Error("Not found");
 
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) => projectMembership.projectId === item.projectId
-      ) === false
+      !(await authorize(session.user, "read", "Link", {
+        projectId: item.projectId,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
 
     return NextResponse.json(item);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request params",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }
 
@@ -60,29 +63,48 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(request: Request, { params }: { params: Params }) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
     const item = await prisma.link.findUnique({
       where: {
         id: params.id,
       },
     });
 
-    if (!item) return NextResponse.json({}, { status: 404 });
+    /**
+     * Make sure the item exists.
+     */
+    if (!item) throw new Error("Not found");
 
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) => projectMembership.projectId === item.projectId
-      ) === false
+      !(await authorize(session.user, "update", "Link", {
+        projectId: item.projectId,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
 
+    /**
+     * Get the request body
+     */
     const body: unknown = await request.json();
+
+    /**
+     * Validate the request body
+     */
     const data = await patchSchema.parseAsync(body);
 
-    await prisma.link.update({
+    /**
+     * Update the item
+     */
+    const updatedItem = await prisma.link.update({
       where: {
         id: params.id,
       },
@@ -96,30 +118,25 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
       },
     });
 
-    return NextResponse.json({});
+    return NextResponse.json(updatedItem);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }
 
 const deleteParamsSchema = z.string().cuid2();
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can continue.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Validate the request params
+     */
     const paramsData = await deleteParamsSchema.parseAsync(params.id);
 
     const item = await prisma.link.findUnique({
@@ -128,15 +145,24 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
       },
     });
 
-    if (!item) return NextResponse.json({}, { status: 404 });
+    /**
+     * Make sure the item exists.
+     */
+    if (!item) throw new Error("Not found");
 
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) => projectMembership.projectId === item.projectId
-      ) === false
+      !(await authorize(session.user, "delete", "Link", {
+        projectId: item.projectId,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
 
+    /**
+     * Delete the item.
+     */
     await prisma.link.delete({
       where: {
         id: params.id,
@@ -145,17 +171,6 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
 
     return NextResponse.json({});
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request params",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }

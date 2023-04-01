@@ -20,8 +20,20 @@ jobs:
         run: npm ci
         working-directory: app
 
+      # https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md#mysql
+      - name: Start MySQL
+        run: |
+          sudo systemctl start mysql.service
+          mysql -e 'CREATE DATABASE db;' -uroot -proot
+          npx prisma db push
+        working-directory: app
+
       - name: Build app
         run: npm run build
+        env:
+          DATABASE_URL: mysql://root:root@localhost:3306/db
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: 1234567890abcdefghijklmnopqrstuv
         working-directory: app
 
       - name: Install Playwright dependencies
@@ -32,19 +44,12 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: playwright
 
-      # https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md#mysql
-      - name: Start MySQL
-        run: |
-          sudo systemctl start mysql.service
-          mysql -e 'CREATE DATABASE db;' -uroot -proot
-          npx prisma db push
-        working-directory: app
-
       - name: Run Playwright tests
         run: npx playwright test
         env:
           DATABASE_URL: mysql://root:root@localhost:3306/db
           NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: 1234567890abcdefghijklmnopqrstuv
         working-directory: playwright
 
       - uses: actions/upload-artifact@v3.1.2

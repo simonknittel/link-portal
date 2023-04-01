@@ -26,6 +26,8 @@ jobs:
           sudo systemctl start mysql.service
           mysql -e 'CREATE DATABASE db;' -uroot -proot
           npx prisma db push
+        env:
+          DATABASE_URL: mysql://root:root@localhost:3306/db
         working-directory: app
 
       - name: Build app

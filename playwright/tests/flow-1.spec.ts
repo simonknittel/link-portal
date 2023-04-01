@@ -50,13 +50,17 @@ test("should create a project, a tag, a link and then favourite it", async ({
   await page.getByRole("link", { name: "Project dashboard" }).click();
 
   await expect(page).toHaveURL(/.*\/app\/project\/test-project-.{10}/);
-  // TODO: Check that the link is listed on the project dashboard
   await expect(page.getByRole("heading", { name: "Test tag" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Test link" })).toBeVisible();
   await page
     .getByRole("button", { name: "Add Test link to your favourites" })
     .click();
   await page.getByRole("link", { name: "Personal dashboard" }).click();
 
   await expect(page).toHaveURL(/.*\/app/);
-  // TODO: Check that the link is listed on the personal dashboard under "Your favourites"
+  await expect(page.getByRole("link", { name: "Test link" })).toBeVisible();
+  await page
+    .getByRole("button", { name: "Remove Test link from your favourites" })
+    .click();
+  await expect(page.getByRole("link", { name: "Test link" })).toBeHidden();
 });

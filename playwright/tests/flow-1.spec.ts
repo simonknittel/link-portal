@@ -1,8 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test.skip("test", async ({ page }) => {
-  // TODO: Figure out authentication before enabling this test
-
+test("test", async ({ page }) => {
   await page.goto("/app");
   await page.getByRole("button", { name: "Create new project" }).click();
   await page.locator('input[name="name"]').fill("Test project");

@@ -7,6 +7,7 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
+import { type Provider } from "next-auth/providers";
 import GitHubProvider from "next-auth/providers/github";
 import slugify from "slugify";
 import { env } from "~/env.mjs";
@@ -25,6 +26,17 @@ declare module "next-auth" {
       projectMemberships: ProjectMember[];
     } & DefaultSession["user"];
   }
+}
+
+const providers: Provider[] = [];
+
+if (env.GITHUB_ID && env.GITHUB_SECRET) {
+  providers.push(
+    GitHubProvider({
+      clientId: env.GITHUB_ID,
+      clientSecret: env.GITHUB_SECRET,
+    })
+  );
 }
 
 /**
@@ -82,12 +94,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   adapter: PrismaAdapter(prisma),
-  providers: [
-    GitHubProvider({
-      clientId: env.GITHUB_ID,
-      clientSecret: env.GITHUB_SECRET,
-    }),
-  ],
+  providers,
   events: {
     async createUser({ user }) {
       /**

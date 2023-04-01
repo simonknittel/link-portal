@@ -8,9 +8,13 @@ _**Note:** This app may be slow at times. This is mainly due to Prisma not havin
 
 ## Usage
 
-1. Duplicate `app/.env.example` to `app/.env`
+1. Duplicate `app/.env.example` to `app/.env` and fill in the blanks.
 2. `nvm use`
-3. `prisma org switch simonknittel-link-portal`
-4. `prisma connect link-portal development`
+3. `docker compose up`
+4. `npx prisma db push`
 5. `cd app/ && npm run dev`
 6. <http://localhost:3000>
+
+## Playwright tests
+
+- `cd playwright/ && npx playwright test --debug`

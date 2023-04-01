@@ -1,22 +1,17 @@
-import { chromium } from "@playwright/test";
-import path from "node:path";
 import { PrismaClient } from "../../app/node_modules/@prisma/client";
 
 async function globalSetup() {
-  const storagePath = path.resolve(__dirname, "storageState.json");
-  const date = new Date();
-  const sessionToken = "04456e41-ec3b-4edf-92c1-48c14e57cacd2";
-
   const prisma = new PrismaClient();
-
-  await prisma.user.create({
-    data: {
+  await prisma.user.upsert({
+    where: { email: "test@example.com" },
+    update: {},
+    create: {
       name: "Test",
       email: "test@example.com",
       sessions: {
         create: {
-          expires: new Date(date.getFullYear(), date.getMonth() + 1, 0),
-          sessionToken,
+          expires: new Date(4070952000 * 1000), // 2099-01-01 @ 12:00am (UTC)
+          sessionToken: "04456e41-ec3b-4edf-92c1-48c14e57cacd2",
         },
       },
       accounts: {
@@ -32,22 +27,6 @@ async function globalSetup() {
       },
     },
   });
-
-  const browser = await chromium.launch();
-  const context = await browser.newContext({ storageState: storagePath });
-  await context.addCookies([
-    {
-      name: "next-auth.session-token",
-      value: sessionToken,
-      domain: "localhost",
-      path: "/",
-      httpOnly: true,
-      sameSite: "Lax",
-      expires: 4070952000, // 01/01/2099 @ 12:00am (UTC)
-    },
-  ]);
-  await context.storageState({ path: storagePath });
-  await browser.close();
 }
 
 export default globalSetup;

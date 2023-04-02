@@ -18,11 +18,10 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url(),
   ),
-  // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
-  GITHUB_ID: z.string(),
-  GITHUB_SECRET: z.string(),
-  MAILGUN_API_KEY: z.string(),
-  MAILGUN_DOMAIN: z.string(),
+  GITHUB_ID: z.string().min(1).optional(),
+  GITHUB_SECRET: z.string().min(1).optional(),
+  MAILGUN_API_KEY: z.string().min(1).optional(),
+  MAILGUN_DOMAIN: z.string().min(1).optional(),
 });
 
 /**

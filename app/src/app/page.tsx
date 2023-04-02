@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
-  if (session) {
-    redirect("/app");
-  }
+  if (session) redirect("/app");
+
+  const activeProviders = authOptions.providers.map((provider) => provider.id);
 
   return (
     <div className="flex justify-center">
@@ -20,8 +20,14 @@ export default async function Page() {
         <h1 className="mb-10 text-center text-6xl">Link Portal</h1>
 
         <div className="flex flex-col gap-2 rounded bg-slate-700 p-8 mx-8">
-          <LoginButtons />
+          <LoginButtons activeProviders={activeProviders} />
         </div>
+
+        <p className="bg-slate-800 p-4 mx-8 text-sm">
+          <strong>Note:</strong> This app may be slow at times. This is mainly
+          due to Prisma not having proper support for PlanetScale in a
+          serverless environment like Vercel yet.
+        </p>
       </main>
     </div>
   );

@@ -1,4 +1,5 @@
 import { type Project } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import {
   FaChevronRight,
@@ -8,6 +9,7 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import Avatar from "~/components/Avatar";
+import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import Account from "./Account";
 import CreateProjectButton from "./CreateProjectButton";
@@ -18,7 +20,14 @@ interface Props {
 }
 
 const Sidebar = async ({ project }: Props) => {
-  const projects = await prisma.project.findMany();
+  const session = await getServerSession(authOptions);
+  const projects = await prisma.project.findMany({
+    where: {
+      id: {
+        in: session!.user.projectMemberships.map((m) => m.projectId),
+      },
+    },
+  });
 
   return (
     <div className="flex h-full flex-col justify-between">

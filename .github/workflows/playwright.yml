@@ -2,16 +2,12 @@ name: Playwright Tests
 
 on:
   pull_request:
-    branches: [main]
-
-defaults:
-  run:
-    working-directory: ./playwright
+    branches: [main, develop]
 
 jobs:
   test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v3.5.0
@@ -20,14 +16,43 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: Install dependencies
+      - name: Install app dependencies
         run: npm ci
+        working-directory: app
 
-      - name: Install Playwright Browsers
+      # https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md#mysql
+      - name: Start MySQL
+        run: |
+          sudo systemctl start mysql.service
+          mysql -e 'CREATE DATABASE db;' -uroot -proot
+          npx prisma db push
+        env:
+          DATABASE_URL: mysql://root:root@localhost:3306/db
+        working-directory: app
+
+      - name: Build app
+        run: npm run build
+        env:
+          DATABASE_URL: mysql://root:root@localhost:3306/db
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: 1234567890abcdefghijklmnopqrstuv
+        working-directory: app
+
+      - name: Install Playwright dependencies
+        run: npm ci
+        working-directory: playwright
+
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps
+        working-directory: playwright
 
       - name: Run Playwright tests
         run: npx playwright test
+        env:
+          DATABASE_URL: mysql://root:root@localhost:3306/db
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: 1234567890abcdefghijklmnopqrstuv
+        working-directory: playwright
 
       - uses: actions/upload-artifact@v3.1.2
         if: always()

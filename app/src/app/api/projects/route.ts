@@ -1,21 +1,41 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { authorize } from "../authorize";
+import errorHandler from "../errorHandler";
 
-const postSchema = z.object({
+const postBodySchema = z.object({
   name: z.string(),
   slug: z.string(),
 });
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
+    if (
+      !(await authorize(session.user, "create", "Project", { projectId: "" }))
+    )
+      throw new Error("Unauthorized");
+
+    /**
+     * Get the request body
+     */
     const body: unknown = await request.json();
-    const data = await postSchema.parseAsync(body);
+
+    /**
+     * Validate the request body
+     */
+    const data = await postBodySchema.parseAsync(body);
 
     const createdProject = await prisma.project.create({
       data: {
@@ -34,17 +54,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(createdProject);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }

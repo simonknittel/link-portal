@@ -1,8 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { authorize } from "../../authorize";
+import errorHandler from "../../errorHandler";
 
 interface Params {
   id: string;
@@ -11,10 +13,16 @@ interface Params {
 const deleteParamsSchema = z.string().cuid2();
 
 export async function DELETE(request: Request, { params }: { params: Params }) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Validate the request params
+     */
     const paramsData = await deleteParamsSchema.parseAsync(params.id);
 
     const item = await prisma.project.findUnique({
@@ -23,16 +31,20 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
       },
     });
 
-    if (!item) return NextResponse.json({}, { status: 404 });
+    /**
+     * Make sure the item exists.
+     */
+    if (!item) throw new Error("Not found");
 
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) =>
-          projectMembership.projectId === item.id &&
-          projectMembership.role === 2
-      ) === false
+      !(await authorize(session.user, "delete", "Project", {
+        projectId: item.id,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
 
     await prisma.project.delete({
       where: {
@@ -42,17 +54,6 @@ export async function DELETE(request: Request, { params }: { params: Params }) {
 
     return NextResponse.json({});
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request params",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }

@@ -1,8 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { authorize } from "../authorize";
+import errorHandler from "../errorHandler";
 
 const postSchema = z.object({
   projectId: z.string().cuid2(),
@@ -13,20 +15,36 @@ const postSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can continue.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Get the request body
+     */
     const body: unknown = await request.json();
+
+    /**
+     * Validate the request body
+     */
     const data = await postSchema.parseAsync(body);
 
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) => projectMembership.projectId === data.projectId
-      ) === false
+      !(await authorize(session.user, "create", "Link", {
+        projectId: data.projectId,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
 
+    /**
+     * Create
+     */
     const createdItem = await prisma.link.create({
       data: {
         projectId: data.projectId,
@@ -41,17 +59,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(createdItem);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }

@@ -1,9 +1,11 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { sendInviteEmail } from "~/server/mail";
+import { authorize } from "../authorize";
+import errorHandler from "../errorHandler";
 
 const postSchema = z.object({
   projectId: z.string().cuid2(),
@@ -12,21 +14,32 @@ const postSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    /**
+     * Get the request body
+     */
     const body: unknown = await request.json();
+
+    /**
+     * Validate the request body
+     */
     const data = await postSchema.parseAsync(body);
 
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) =>
-          projectMembership.projectId === data.projectId &&
-          projectMembership.role === 2
-      ) === false
+      !(await authorize(session.user, "create", "ProjectMember", {
+        projectId: data.projectId,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
 
     const user = await prisma.user.findUnique({
       where: {
@@ -64,18 +77,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(createdProjectMember);
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }
 
@@ -95,18 +97,27 @@ export async function DELETE(request: Request) {
   if (!session) return NextResponse.json({}, { status: 401 });
 
   try {
+    /**
+     * Get the request body
+     */
     const body: unknown = await request.json();
+
+    /**
+     * Validate the request body
+     */
     const data = await deleteSchema.parseAsync(body);
 
-    // TODO: Check if user is removing himself and there is at least on other admin left
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
     if (
-      session.user.projectMemberships.some(
-        (projectMembership) =>
-          projectMembership.projectId === data.projectId &&
-          projectMembership.role === 2
-      ) === false
+      !(await authorize(session.user, "delete", "ProjectMember", {
+        projectId: data.projectId,
+      }))
     )
-      return NextResponse.json({}, { status: 401 });
+      throw new Error("Unauthorized");
+
+    // TODO: Check if user is removing himself and there is at least on other admin left
 
     if ("userId" in data) {
       await prisma.projectMember.delete({
@@ -130,17 +141,6 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({});
   } catch (error) {
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        {
-          message: "Invalid request body",
-          errors: error.errors,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    return errorHandler(error);
   }
 }

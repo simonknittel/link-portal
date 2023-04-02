@@ -49,6 +49,8 @@ const CreateOrEditLinkForm = (props: Props) => {
               href: data.href,
               tagIds: data.tags.map((tag) => tag.id),
             };
+          } else if (response.status === 401) {
+            toast.error("You are not authorized to view this link.");
           } else {
             toast.error("There has been an error retrieving the link data.");
           }
@@ -89,6 +91,10 @@ const CreateOrEditLinkForm = (props: Props) => {
           router.refresh();
           props.handleSuccess?.();
           reset();
+        } else if (response.status === 401) {
+          toast.error(
+            "You are not authorized to create a link for this project."
+          );
         } else {
           toast.error("There has been an error while creating the link.");
         }
@@ -113,6 +119,8 @@ const CreateOrEditLinkForm = (props: Props) => {
           router.refresh();
           props.handleSuccess?.();
           reset();
+        } else if (response.status === 401) {
+          toast.error("You are not authorized to update this link.");
         } else {
           toast.error("There has been an error while updating the link.");
         }
@@ -128,10 +136,6 @@ const CreateOrEditLinkForm = (props: Props) => {
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* <div className="mt-4">
-            <Avatar />
-          </div> */}
-
       <label className="block mt-4">Title</label>
       <input
         className="h-11 w-full rounded bg-slate-600 px-4"

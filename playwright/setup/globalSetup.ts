@@ -25,6 +25,17 @@ async function globalSetup() {
           scope: "read:user,user:email",
         },
       },
+      projects: {
+        create: {
+          project: {
+            create: {
+              name: "Test project",
+              slug: "test-project",
+            },
+          },
+          role: 2,
+        },
+      },
     },
   });
 }

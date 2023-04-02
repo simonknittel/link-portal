@@ -8,6 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   globalSetup: "./setup/globalSetup.ts",
+  globalTeardown: "./setup/globalTeardown.ts",
 
   use: {
     baseURL: "http://127.0.0.1:3000",

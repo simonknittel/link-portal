@@ -16,6 +16,7 @@ const DashboardItem = ({ link, favourited }: Props) => {
         className="flex h-full gap-4 rounded bg-slate-700 p-4 hover:bg-slate-600"
       >
         <span className="flex-none">
+          {/* TODO: Show proper fallback image */}
           <img
             src={imgSrc}
             width={64}

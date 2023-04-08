@@ -2,10 +2,10 @@ import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaListUl } from "react-icons/fa";
-import CreateOrEditLinkModal from "~/app/app/project/[projectSlug]/links/components/CreateOrEditLinkModal";
-import LinksTable from "~/app/app/project/[projectSlug]/links/components/LinksTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import CreateOrEditLinkModal from "./_components/CreateOrEditLinkModal";
+import LinksTable from "./_components/LinksTable";
 
 interface Params {
   projectSlug: string;

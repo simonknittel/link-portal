@@ -1,11 +1,11 @@
 import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { FaStar, FaUserAlt } from "react-icons/fa";
-import DashboardItem from "~/app/app/components/DashboardItem";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import Sidebar from "./components/Sidebar";
-import SidebarContainer from "./components/SidebarContainer";
+import DashboardItem from "./_components/DashboardItem";
+import Sidebar from "./_components/Sidebar";
+import SidebarContainer from "./_components/SidebarContainer";
 
 export const metadata: Metadata = {
   title: "Projects | Link Portal",

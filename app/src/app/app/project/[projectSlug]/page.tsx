@@ -2,9 +2,9 @@ import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaUsers } from "react-icons/fa";
-import DashboardItem from "~/app/app/components/DashboardItem";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import DashboardItem from "../../_components/DashboardItem";
 
 interface Params {
   projectSlug: string;

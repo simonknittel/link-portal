@@ -2,12 +2,12 @@ import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaCog } from "react-icons/fa";
-import AddProjectMember from "~/app/app/project/[projectSlug]/settings/components/AddProjectMember";
-import DeleteProjectButton from "~/app/app/project/[projectSlug]/settings/components/DeleteProjectButton";
-import InvitedProjectMembersTable from "~/app/app/project/[projectSlug]/settings/components/InvitedProjectMembersTable";
-import ProjectMembersTable from "~/app/app/project/[projectSlug]/settings/components/ProjectMembersTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import AddProjectMember from "./_components/AddProjectMember";
+import DeleteProjectButton from "./_components/DeleteProjectButton";
+import InvitedProjectMembersTable from "./_components/InvitedProjectMembersTable";
+import ProjectMembersTable from "./_components/ProjectMembersTable";
 
 interface Params {
   projectSlug: string;

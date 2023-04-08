@@ -2,10 +2,10 @@ import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FaListUl } from "react-icons/fa";
-import CreateOrEditTagModal from "~/app/app/project/[projectSlug]/tags/components/CreateOrEditTagModal";
-import TagsTable from "~/app/app/project/[projectSlug]/tags/components/TagsTable";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import CreateOrEditTagModal from "./_components/CreateOrEditTagModal";
+import TagsTable from "./_components/TagsTable";
 
 interface Params {
   projectSlug: string;

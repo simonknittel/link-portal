@@ -1,8 +1,8 @@
 import { type Metadata } from "next";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
-import LoginButtons from "~/app/components/LoginButtons";
 import { authOptions } from "~/server/auth";
+import LoginButtons from "./_components/LoginButtons";
 
 export const metadata: Metadata = {
   title: "Login | Link Portal",

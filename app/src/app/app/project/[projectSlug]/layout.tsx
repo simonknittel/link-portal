@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { type ReactNode } from "react";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import Sidebar from "../../components/Sidebar";
-import SidebarContainer from "../../components/SidebarContainer";
+import Sidebar from "../../_components/Sidebar";
+import SidebarContainer from "../../_components/SidebarContainer";
 
 interface Props {
   children: ReactNode;

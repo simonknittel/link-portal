@@ -1,10 +1,12 @@
 import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { FaUsers } from "react-icons/fa";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import DashboardItem from "../../_components/DashboardItem";
+import DashboardEntries from "../../_components/DashboardEntries";
+import DashboardEntriesSkeleton from "../../_components/DashboardEntriesSkeleton";
 
 interface Params {
   projectSlug: string;
@@ -44,6 +46,7 @@ export default async function Page({ params }: Props) {
       },
     },
   });
+
   const session = await getServerSession(authOptions);
   if (
     !project ||
@@ -53,12 +56,6 @@ export default async function Page({ params }: Props) {
   )
     notFound();
 
-  const linkUserKeyValue = await prisma.linkUserKeyValue.findMany({
-    where: {
-      userId: session.user.id,
-    },
-  });
-
   return (
     <main className="p-8 pt-24 lg:pt-8">
       <h1 className="font-bold text-2xl flex items-center gap-4">
@@ -66,40 +63,9 @@ export default async function Page({ params }: Props) {
         Project dashboard
       </h1>
 
-      {project.tags
-        .sort((a, b) => a.title.localeCompare(b.title))
-        .map((tag) => (
-          <section key={tag.title} className="mt-8">
-            <h3 className="mb-4 text-xl font-bold">{tag.title}</h3>
-
-            {tag.links.length > 0 ? (
-              <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
-                {tag.links
-                  .sort((a, b) => a.title.localeCompare(b.title))
-                  .map((link) => {
-                    const favourited = linkUserKeyValue.some(
-                      (item) =>
-                        item.key === "favourited" &&
-                        item.linkId === link.id &&
-                        item.value === "true"
-                    );
-
-                    return (
-                      <DashboardItem
-                        key={link.id}
-                        link={link}
-                        favourited={favourited}
-                      />
-                    );
-                  })}
-              </ul>
-            ) : (
-              <p className="italic text-slate-500">
-                This tag doesn&apos;t have any links yet.
-              </p>
-            )}
-          </section>
-        ))}
+      <Suspense fallback={<DashboardEntriesSkeleton />}>
+        <DashboardEntries project={project} />
+      </Suspense>
     </main>
   );
 }

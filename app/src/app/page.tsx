@@ -20,7 +20,7 @@ export default async function Page() {
         <h1 className="mb-4 text-center text-6xl">Link Portal</h1>
 
         <p className="text-sm mx-8 p-4">
-          This is the demo app of the{" "}
+          This is the demo of the{" "}
           <a
             href="https://github.com/simonknittel/link-portal"
             className="text-slate-400 underline hover:text-slate-300"
@@ -35,7 +35,7 @@ export default async function Page() {
         </div>
 
         <p className="bg-slate-800 p-4 mx-8 text-sm">
-          <strong>Note:</strong> This app may be slow at times. This is mainly
+          <strong>Note:</strong> This demo may be slow at times. This is mainly
           due to Prisma not having proper support for PlanetScale in a
           serverless environment like Vercel yet.
         </p>

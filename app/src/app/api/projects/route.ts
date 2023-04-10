@@ -33,6 +33,13 @@ export async function POST(request: Request) {
     const body: unknown = await request.json();
     const data = await postBodySchema.parseAsync(body);
 
+    /**
+     * TODO: Check demo limits
+     */
+
+    /**
+     * Create
+     */
     const createdProject = await prisma.project.create({
       data: {
         name: data.name,

@@ -45,6 +45,9 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
+      /**
+       * Check demo limits
+       */
       const [projectMembers, invitedProjectMembers] = await prisma.$transaction(
         [
           prisma.projectMember.count({
@@ -66,6 +69,9 @@ export async function POST(request: Request) {
       )
         throw new Error("Demo limits");
 
+      /**
+       * Create
+       */
       const createdItem = await prisma.invitedProjectMember.create({
         data: {
           projectId: data.projectId,

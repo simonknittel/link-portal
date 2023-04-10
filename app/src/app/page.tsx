@@ -17,7 +17,18 @@ export default async function Page() {
   return (
     <div className="flex justify-center">
       <main className="w-full max-w-md py-8">
-        <h1 className="mb-10 text-center text-6xl">Link Portal</h1>
+        <h1 className="mb-4 text-center text-6xl">Link Portal</h1>
+
+        <p className="text-sm mx-8 p-4">
+          This is the demo app of the{" "}
+          <a
+            href="https://github.com/simonknittel/link-portal"
+            className="text-slate-400 underline hover:text-slate-300"
+          >
+            Link Portal repository
+          </a>{" "}
+          from GitHub.
+        </p>
 
         <div className="flex flex-col gap-2 rounded bg-slate-700 p-8 mx-8">
           <LoginButtons activeProviders={activeProviders} />

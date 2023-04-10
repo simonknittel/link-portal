@@ -56,6 +56,9 @@ export async function POST(request: Request) {
         },
       });
 
+      /**
+       * Send an email to the invited user.
+       */
       const project = await prisma.project.findUnique({
         where: {
           id: data.projectId,
@@ -63,6 +66,22 @@ export async function POST(request: Request) {
       });
 
       await sendInviteEmail(data.email, project!, session.user);
+
+      // const definitions = await getDefinitions();
+      // const { toggles } = evaluateFlags(definitions, {
+      //   userId: session.user.id,
+      // });
+      // const flags = flagsClient(toggles);
+
+      // if (flags.isEnabled("DisableInviteEmail") === false) {
+      //   const project = await prisma.project.findUnique({
+      //     where: {
+      //       id: data.projectId,
+      //     },
+      //   });
+
+      //   await sendInviteEmail(data.email, project!, session.user);
+      // }
 
       return NextResponse.json(createdItem);
     }

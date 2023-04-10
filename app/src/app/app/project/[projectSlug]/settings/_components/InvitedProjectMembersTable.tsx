@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Button from "../../../../../../components/Button";
 
@@ -53,10 +54,18 @@ const InvitedProjectMembersTable = ({
         }),
       });
 
-      if (!response.ok) return;
-
-      router.refresh();
-    } catch (error) {}
+      if (response.ok) {
+        router.refresh();
+        toast.success("Successfully removed project member");
+      } else {
+        toast.error(
+          "There has been an error while removing the project member."
+        );
+      }
+    } catch (error) {
+      toast.error("There has been an error while removing the project member.");
+      console.error(error);
+    }
 
     setIsLoading(null);
   };

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { FaCog } from "react-icons/fa";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { getProjectBySlug } from "../_utils/getProject";
 import AddProjectMember from "./_components/AddProjectMember";
 import DeleteProjectButton from "./_components/DeleteProjectButton";
 import InvitedProjectMembersTable from "./_components/InvitedProjectMembersTable";
@@ -18,11 +19,7 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const project = await prisma.project.findUnique({
-    where: {
-      slug: params.projectSlug,
-    },
-  });
+  const project = await getProjectBySlug(params.projectSlug);
   if (!project) return {};
 
   return {
@@ -35,11 +32,7 @@ interface Props {
 }
 
 export default async function Page({ params }: Props) {
-  const project = await prisma.project.findUnique({
-    where: {
-      slug: params.projectSlug,
-    },
-  });
+  const project = await getProjectBySlug(params.projectSlug);
   const session = await getServerSession(authOptions);
   if (
     !project ||

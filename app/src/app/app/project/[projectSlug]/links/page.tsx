@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { FaListUl } from "react-icons/fa";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { getProjectBySlug } from "../_utils/getProject";
 import CreateOrEditLinkModal from "./_components/CreateOrEditLinkModal";
 import LinksTable from "./_components/LinksTable";
 
@@ -16,11 +17,7 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const project = await prisma.project.findUnique({
-    where: {
-      slug: params.projectSlug,
-    },
-  });
+  const project = await getProjectBySlug(params.projectSlug);
   if (!project) return {};
 
   return {

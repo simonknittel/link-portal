@@ -2,9 +2,9 @@ import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { type ReactNode } from "react";
 import { authOptions } from "~/server/auth";
-import { prisma } from "~/server/db";
 import Sidebar from "../../_components/Sidebar";
 import SidebarContainer from "../../_components/SidebarContainer";
+import { getProjectBySlug } from "./_utils/getProject";
 
 interface Props {
   children: ReactNode;
@@ -14,11 +14,7 @@ interface Props {
 }
 
 export default async function ProjectLayout({ children, params }: Props) {
-  const project = await prisma.project.findUnique({
-    where: {
-      slug: params.projectSlug,
-    },
-  });
+  const project = await getProjectBySlug(params.projectSlug);
   const session = await getServerSession(authOptions);
   if (
     !project ||

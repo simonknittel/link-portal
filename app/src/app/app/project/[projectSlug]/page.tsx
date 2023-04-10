@@ -7,6 +7,7 @@ import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import DashboardEntries from "../../_components/DashboardEntries";
 import DashboardEntriesSkeleton from "../../_components/DashboardEntriesSkeleton";
+import { getProjectBySlug } from "./_utils/getProject";
 
 interface Params {
   projectSlug: string;
@@ -17,11 +18,7 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const project = await prisma.project.findUnique({
-    where: {
-      slug: params.projectSlug,
-    },
-  });
+  const project = await getProjectBySlug(params.projectSlug);
   if (!project) return {};
 
   return {

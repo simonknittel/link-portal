@@ -1,11 +1,12 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { sendInviteEmail } from "~/server/mail";
-import { authorize } from "../authorize";
-import errorHandler from "../errorHandler";
+import { authorize } from "../_utils/authorize";
+import errorHandler from "../_utils/errorHandler";
 
 const postSchema = z.object({
   projectId: z.string().cuid2(),
@@ -22,13 +23,9 @@ export async function POST(request: Request) {
     if (!session) throw new Error("Unauthorized");
 
     /**
-     * Get the request body
-     */
-    const body: unknown = await request.json();
-
-    /**
      * Validate the request body
      */
+    const body: unknown = await request.json();
     const data = await postSchema.parseAsync(body);
 
     /**
@@ -48,6 +45,33 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
+      /**
+       * Check demo limits
+       */
+      const [projectMembers, invitedProjectMembers] = await prisma.$transaction(
+        [
+          prisma.projectMember.count({
+            where: {
+              projectId: data.projectId,
+            },
+          }),
+          prisma.invitedProjectMember.count({
+            where: {
+              projectId: data.projectId,
+            },
+          }),
+        ]
+      );
+
+      if (
+        env.NEXT_PUBLIC_DEMO === "true" &&
+        projectMembers + invitedProjectMembers >= 3
+      )
+        throw new Error("Demo limits");
+
+      /**
+       * Create
+       */
       const createdItem = await prisma.invitedProjectMember.create({
         data: {
           projectId: data.projectId,
@@ -117,13 +141,9 @@ export async function DELETE(request: Request) {
 
   try {
     /**
-     * Get the request body
-     */
-    const body: unknown = await request.json();
-
-    /**
      * Validate the request body
      */
+    const body: unknown = await request.json();
     const data = await deleteSchema.parseAsync(body);
 
     /**

@@ -33,6 +33,7 @@ const server = z.object({
 const client = z.object({
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL: z.string().url().optional(),
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN: z.string().min(1).optional(),
+  NEXT_PUBLIC_DEMO: z.string().optional(),
 });
 
 /**
@@ -54,6 +55,7 @@ const processEnv = {
   UNLEASH_SERVER_API_TOKEN: process.env.UNLEASH_SERVER_API_TOKEN,
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL: process.env.NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL,
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN: process.env.NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN,
+  NEXT_PUBLIC_DEMO: process.env.NEXT_PUBLIC_DEMO,
 };
 
 // Don't touch the part below

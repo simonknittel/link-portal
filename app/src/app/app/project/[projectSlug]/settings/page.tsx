@@ -1,7 +1,8 @@
 import { type Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
-import { FaCog } from "react-icons/fa";
+import { FaCog, FaExclamationTriangle } from "react-icons/fa";
+import { env } from "~/env.mjs";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { getProjectBySlug } from "../_utils/getProject";
@@ -68,7 +69,22 @@ export default async function Page({ params }: Props) {
       <section className="p-8 bg-slate-700 rounded max-w-4xl mt-8">
         <h2 className="font-bold text-xl">Members</h2>
 
-        <AddProjectMember projectId={project.id} />
+        {env.NEXT_PUBLIC_DEMO === "true" &&
+        projectMembers.length + invitedProjectMembers.length >= 3 ? (
+          <>
+            <AddProjectMember
+              className="opacity-50 pointer-events-none"
+              projectId={project.id}
+            />
+
+            <p className="mt-2 px-4 h-11 bg-amber-700 rounded flex gap-2 items-center">
+              <FaExclamationTriangle />
+              You can only invite two other project members in this demo.
+            </p>
+          </>
+        ) : (
+          <AddProjectMember projectId={project.id} />
+        )}
 
         <ProjectMembersTable
           project={project}

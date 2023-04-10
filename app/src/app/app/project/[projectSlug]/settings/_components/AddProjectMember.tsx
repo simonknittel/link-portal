@@ -1,6 +1,7 @@
 "use client";
 
 import { type Project } from "@prisma/client";
+import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -9,6 +10,7 @@ import { FaPlusSquare, FaSpinner } from "react-icons/fa";
 import Button from "../../../../../../components/Button";
 
 interface Props {
+  className?: string;
   projectId: Project["id"];
 }
 
@@ -17,7 +19,7 @@ interface FormValues {
   role: "1" | "2";
 }
 
-const AddProjectMember = ({ projectId }: Props) => {
+const AddProjectMember = ({ className, projectId }: Props) => {
   const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
   const { register, handleSubmit, reset } = useForm<FormValues>();
@@ -54,7 +56,10 @@ const AddProjectMember = ({ projectId }: Props) => {
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    <form className="mt-8 flex gap-2" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className={clsx(className, "mt-8 flex gap-2")}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <input
         className="bg-slate-600 rounded flex-1 px-4"
         placeholder="Email address"

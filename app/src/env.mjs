@@ -22,6 +22,8 @@ const server = z.object({
   GITHUB_SECRET: z.string().min(1).optional(),
   MAILGUN_API_KEY: z.string().min(1).optional(),
   MAILGUN_DOMAIN: z.string().min(1).optional(),
+  UNLEASH_SERVER_API_URL: z.string().url().optional(),
+  UNLEASH_SERVER_API_TOKEN: z.string().min(1).optional(),
 });
 
 /**
@@ -29,7 +31,8 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object({
-  // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL: z.string().url().optional(),
+  NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN: z.string().min(1).optional(),
 });
 
 /**
@@ -47,6 +50,10 @@ const processEnv = {
   GITHUB_SECRET: process.env.GITHUB_SECRET,
   MAILGUN_API_KEY: process.env.MAILGUN_API_KEY,
   MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
+  UNLEASH_SERVER_API_URL: process.env.UNLEASH_SERVER_API_URL,
+  UNLEASH_SERVER_API_TOKEN: process.env.UNLEASH_SERVER_API_TOKEN,
+  NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL: process.env.NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL,
+  NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN: process.env.NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN,
 };
 
 // Don't touch the part below

@@ -39,6 +39,7 @@ This project has been setup with the [T3 App](https://create.t3.gg/) stack initi
 - [Terraform](https://www.terraform.io/)
 - [Zod](https://github.com/colinhacks/zod)
 - [Mailgun](https://www.mailgun.com/)
+- [Unleash](https://www.getunleash.io/)
 
 ## Usage
 

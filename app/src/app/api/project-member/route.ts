@@ -4,8 +4,8 @@ import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { sendInviteEmail } from "~/server/mail";
-import { authorize } from "../authorize";
-import errorHandler from "../errorHandler";
+import { authorize } from "../_utils/authorize";
+import errorHandler from "../_utils/errorHandler";
 
 const postSchema = z.object({
   projectId: z.string().cuid2(),
@@ -22,13 +22,9 @@ export async function POST(request: Request) {
     if (!session) throw new Error("Unauthorized");
 
     /**
-     * Get the request body
-     */
-    const body: unknown = await request.json();
-
-    /**
      * Validate the request body
      */
+    const body: unknown = await request.json();
     const data = await postSchema.parseAsync(body);
 
     /**
@@ -48,6 +44,8 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
+      // TODO: Limit to 5 members for the demo
+
       const createdItem = await prisma.invitedProjectMember.create({
         data: {
           projectId: data.projectId,
@@ -117,13 +115,9 @@ export async function DELETE(request: Request) {
 
   try {
     /**
-     * Get the request body
-     */
-    const body: unknown = await request.json();
-
-    /**
      * Validate the request body
      */
+    const body: unknown = await request.json();
     const data = await deleteSchema.parseAsync(body);
 
     /**

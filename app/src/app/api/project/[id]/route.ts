@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { authorize } from "../../authorize";
-import errorHandler from "../../errorHandler";
+import { authorize } from "../../_utils/authorize";
+import errorHandler from "../../_utils/errorHandler";
 
 interface Params {
   id: string;

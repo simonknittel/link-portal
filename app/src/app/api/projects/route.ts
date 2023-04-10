@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { authorize } from "../authorize";
-import errorHandler from "../errorHandler";
+import { authorize } from "../_utils/authorize";
+import errorHandler from "../_utils/errorHandler";
 
 const postBodySchema = z.object({
   name: z.string(),
@@ -28,13 +28,9 @@ export async function POST(request: Request) {
       throw new Error("Unauthorized");
 
     /**
-     * Get the request body
-     */
-    const body: unknown = await request.json();
-
-    /**
      * Validate the request body
      */
+    const body: unknown = await request.json();
     const data = await postBodySchema.parseAsync(body);
 
     const createdProject = await prisma.project.create({

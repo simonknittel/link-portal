@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import errorHandler from "~/app/api/errorHandler";
+import errorHandler from "~/app/api/_utils/errorHandler";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
@@ -47,13 +47,9 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
       return NextResponse.json({}, { status: 401 });
 
     /**
-     * Get the request body
-     */
-    const body: unknown = await request.json();
-
-    /**
      * Validate the request body
      */
+    const body: unknown = await request.json();
     const data = await patchSchema.parseAsync(body);
 
     const newValue = data.favourited ? "true" : "false";

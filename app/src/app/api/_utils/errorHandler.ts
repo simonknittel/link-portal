@@ -24,6 +24,13 @@ export default function errorHandler(error: unknown) {
       },
       { status: 404 }
     );
+  } else if (error instanceof Error && error.message === "Demo limits") {
+    return NextResponse.json(
+      {
+        message: "Demo limits",
+      },
+      { status: 403 }
+    );
   }
 
   console.error(error);

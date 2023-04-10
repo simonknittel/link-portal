@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { sendInviteEmail } from "~/server/mail";
@@ -44,7 +45,26 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      // TODO: Limit to 5 members for the demo
+      const [projectMembers, invitedProjectMembers] = await prisma.$transaction(
+        [
+          prisma.projectMember.count({
+            where: {
+              projectId: data.projectId,
+            },
+          }),
+          prisma.invitedProjectMember.count({
+            where: {
+              projectId: data.projectId,
+            },
+          }),
+        ]
+      );
+
+      if (
+        env.NEXT_PUBLIC_DEMO === "true" &&
+        projectMembers + invitedProjectMembers >= 3
+      )
+        throw new Error("Demo limits");
 
       const createdItem = await prisma.invitedProjectMember.create({
         data: {

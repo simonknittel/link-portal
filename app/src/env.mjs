@@ -24,6 +24,8 @@ const server = z.object({
   MAILGUN_DOMAIN: z.string().min(1).optional(),
   UNLEASH_SERVER_API_URL: z.string().url().optional(),
   UNLEASH_SERVER_API_TOKEN: z.string().min(1).optional(),
+  PUSHER_APP_SECRET: z.string().min(1).optional(),
+  PUSHER_APP_ID: z.string().min(1).optional(),
 });
 
 /**
@@ -34,6 +36,9 @@ const client = z.object({
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL: z.string().url().optional(),
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN: z.string().min(1).optional(),
   NEXT_PUBLIC_DEMO: z.string().optional(),
+  NEXT_PUBLIC_PUSHER_HOST: z.string().min(1).optional(),
+  NEXT_PUBLIC_PUSHER_PORT: z.string().optional(),
+  NEXT_PUBLIC_PUSHER_APP_KEY: z.string().min(1).optional(),
 });
 
 /**
@@ -56,6 +61,11 @@ const processEnv = {
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL: process.env.NEXT_PUBLIC_UNLEASH_FRONTEND_API_URL,
   NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN: process.env.NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN,
   NEXT_PUBLIC_DEMO: process.env.NEXT_PUBLIC_DEMO,
+  NEXT_PUBLIC_PUSHER_HOST: process.env.NEXT_PUBLIC_PUSHER_HOST,
+  NEXT_PUBLIC_PUSHER_PORT: process.env.NEXT_PUBLIC_PUSHER_PORT,
+  NEXT_PUBLIC_PUSHER_APP_KEY: process.env.NEXT_PUBLIC_PUSHER_APP_KEY,
+  PUSHER_APP_SECRET: process.env.PUSHER_APP_SECRET,
+  PUSHER_APP_ID: process.env.PUSHER_APP_ID,
 };
 
 // Don't touch the part below

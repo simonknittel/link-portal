@@ -13,7 +13,7 @@ import { FaRegTrashAlt, FaSpinner } from "react-icons/fa";
 import Button from "../../../../../../components/Button";
 import CreateOrEditTagModal from "./CreateOrEditTagModal";
 
-interface Props {
+export interface TagsTableProps {
   tags: Tag[];
 }
 
@@ -21,7 +21,7 @@ type Row = Tag;
 
 const columnHelper = createColumnHelper<Row>();
 
-const TagsTable = ({ tags }: Props) => {
+const TagsTable = ({ tags }: TagsTableProps) => {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState<Tag["id"] | null>(null);
 

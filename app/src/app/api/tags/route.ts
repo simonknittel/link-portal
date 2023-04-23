@@ -5,6 +5,7 @@ import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { authorize } from "../_utils/authorize";
 import errorHandler from "../_utils/errorHandler";
+import { getPusherClient } from "../_utils/pusher";
 
 const postBodySchema = z.object({
   projectId: z.string().cuid2(),
@@ -46,6 +47,11 @@ export async function POST(request: Request) {
         description: data.description,
       },
     });
+
+    const pusherClient = getPusherClient();
+    if (pusherClient) {
+      void pusherClient.trigger("my-project", "tag-created", createdItem);
+    }
 
     return NextResponse.json(createdItem);
   } catch (error) {

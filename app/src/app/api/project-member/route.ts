@@ -136,10 +136,13 @@ const deleteSchema = z.union([
 ]);
 
 export async function DELETE(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
     /**
      * Validate the request body
      */

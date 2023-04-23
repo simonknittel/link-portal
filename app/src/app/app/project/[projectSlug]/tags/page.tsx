@@ -59,7 +59,7 @@ export default async function Page({ params }: Props) {
       </div>
 
       <div className="bg-slate-700 p-8 rounded mt-8">
-        <TagsTablePusherWrapper tags={project.tags} />
+        <TagsTablePusherWrapper tags={project.tags} projectId={project.id} />
       </div>
     </main>
   );

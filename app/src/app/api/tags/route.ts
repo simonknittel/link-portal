@@ -49,9 +49,12 @@ export async function POST(request: Request) {
     });
 
     const pusherClient = getPusherClient();
-    if (pusherClient) {
-      void pusherClient.trigger("my-project", "tag-created", createdItem);
-    }
+    if (pusherClient)
+      void pusherClient.trigger(
+        createdItem.projectId,
+        "tag-created",
+        createdItem
+      );
 
     return NextResponse.json(createdItem);
   } catch (error) {

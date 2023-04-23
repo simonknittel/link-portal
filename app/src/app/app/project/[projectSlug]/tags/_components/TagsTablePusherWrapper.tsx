@@ -1,46 +1,37 @@
 "use client";
 
-import { type Tag } from "@prisma/client";
-import PusherJS from "pusher-js";
+import { type Project, type Tag } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { env } from "~/env.mjs";
+import { useRealtime } from "~/app/app/_utils/useRealtime";
 import TagsTable, { type TagsTableProps } from "./TagsTable";
 
 interface Props {
   tags: TagsTableProps["tags"];
+  projectId: Project["id"];
 }
 
-const TagsTablePusherWrapper = ({ tags }: Props) => {
+const TagsTablePusherWrapper = ({ tags, projectId }: Props) => {
   const [_tags, setTags] = useState(tags);
+  const client = useRealtime();
 
   useEffect(() => {
     setTags(tags);
   }, [tags]);
 
   useEffect(() => {
-    if (
-      !env.NEXT_PUBLIC_PUSHER_HOST ||
-      !env.NEXT_PUBLIC_PUSHER_PORT ||
-      !env.NEXT_PUBLIC_PUSHER_APP_KEY
-    )
-      return;
+    const _client = client.current;
 
-    const client = new PusherJS(env.NEXT_PUBLIC_PUSHER_APP_KEY, {
-      wsHost: env.NEXT_PUBLIC_PUSHER_HOST,
-      wsPort: parseInt(env.NEXT_PUBLIC_PUSHER_PORT),
-      disableStats: true,
-      forceTLS: false,
-      enabledTransports: ["ws", "wss"],
-    });
+    if (!_client) return;
 
-    client.subscribe("my-project").bind("tag-created", (data: Tag) => {
+    _client.subscribe(projectId).bind("tag-created", (data: Tag) => {
       setTags((tags) => [...tags, data]);
     });
 
     return () => {
-      client.disconnect();
+      if (!_client) return;
+      _client.unsubscribe(projectId);
     };
-  }, []);
+  }, [client, projectId]);
 
   return (
     <TagsTable tags={_tags.sort((a, b) => a.title.localeCompare(b.title))} />

@@ -29,5 +29,6 @@
       ],
       "automerge": false
     }
-  ]
+  ],
+  "configMigration": true
 }

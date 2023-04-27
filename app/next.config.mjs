@@ -35,6 +35,8 @@ const config = {
 
   eslint: {
     ignoreDuringBuilds: true
-  }
+  },
+
+  cleanDistDir: true,
 };
 export default config;

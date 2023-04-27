@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { sendInviteEmail } from "~/app/api/_utils/mail";
 import { env } from "~/env.mjs";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { sendInviteEmail } from "~/server/mail";
 import { authorize } from "../_utils/authorize";
 import errorHandler from "../_utils/errorHandler";
 
@@ -136,10 +136,13 @@ const deleteSchema = z.union([
 ]);
 
 export async function DELETE(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({}, { status: 401 });
-
   try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
     /**
      * Validate the request body
      */

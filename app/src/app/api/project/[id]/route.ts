@@ -10,6 +10,63 @@ interface Params {
   id: string;
 }
 
+const patchBodySchema = z.object({
+  isPublic: z.boolean().optional(),
+});
+
+export async function PATCH(request: Request, { params }: { params: Params }) {
+  try {
+    /**
+     * Authenticate the request. Make sure only authenticated users can create.
+     */
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error("Unauthorized");
+
+    const item = await prisma.project.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    /**
+     * Make sure the item exists.
+     */
+    if (!item) throw new Error("Not found");
+
+    /**
+     * Authorize the request. Make sure only project members can continue.
+     */
+    if (
+      !(await authorize(session.user, "update", "Project", {
+        projectId: item.id,
+      }))
+    )
+      throw new Error("Unauthorized");
+
+    /**
+     * Validate the request body
+     */
+    const body: unknown = await request.json();
+    const data = await patchBodySchema.parseAsync(body);
+
+    /**
+     * Update the item
+     */
+    const updatedItem = await prisma.project.update({
+      where: {
+        id: params.id,
+      },
+      data: {
+        isPublic: data.isPublic ? new Date() : null,
+      },
+    });
+
+    return NextResponse.json(updatedItem);
+  } catch (error) {
+    return errorHandler(error);
+  }
+}
+
 const deleteParamsSchema = z.string().cuid2();
 
 export async function DELETE(request: Request, { params }: { params: Params }) {

@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+
   db:
     image: mysql:8.0.32
     restart: on-failure
@@ -9,3 +10,11 @@ services:
       MYSQL_DATABASE: db
     ports:
       - 3306:3306
+
+  soketi:
+    image: quay.io/soketi/soketi:1.5.0-16-distroless
+    restart: on-failure
+    environment:
+      name: value
+    ports:
+      - 6001:6001

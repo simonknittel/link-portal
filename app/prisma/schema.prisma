@@ -57,6 +57,7 @@ model Project {
     projectMembers        ProjectMember[]
     image                 String?
     invitedProjectMembers InvitedProjectMember[]
+    isPublic              DateTime?
 }
 
 model ProjectMember {

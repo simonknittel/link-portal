@@ -103,6 +103,16 @@ export default async function Page({ params }: Props) {
         )}
       </section>
 
+      {/* <section className="p-8 bg-slate-700 rounded max-w-4xl mt-8">
+        <h2 className="font-bold text-xl">Visibility</h2>
+
+        <p className="mt-4">
+          Make the project public and allow everyone to view it&apos;s links.
+        </p>
+
+        <VisibilityCheckbox project={project} />
+      </section> */}
+
       <section className="p-8 bg-red-900 rounded bg-opacity-25 max-w-4xl mt-8">
         <h2 className="font-bold text-xl text-red-500">Danger zone</h2>
 

@@ -25,10 +25,11 @@ const DashboardEntries = async ({ project }: Props) => {
         .sort((a, b) => a.title.localeCompare(b.title))
         .map((tag) => (
           <section key={tag.title} className="mt-8">
-            <h3 className="mb-4 text-xl font-bold">{tag.title}</h3>
+            <h3 className="text-xl font-bold">{tag.title}</h3>
+            {tag.description && <p>{tag.description}</p>}
 
             {tag.links.length > 0 ? (
-              <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
+              <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-4">
                 {tag.links
                   .sort((a, b) => a.title.localeCompare(b.title))
                   .map((link) => {
@@ -49,7 +50,7 @@ const DashboardEntries = async ({ project }: Props) => {
                   })}
               </ul>
             ) : (
-              <p className="italic text-slate-500">
+              <p className="italic text-slate-500 mt-4">
                 This tag doesn&apos;t have any links yet.
               </p>
             )}

@@ -15,18 +15,18 @@ const DashboardItem = ({ link, favourited }: Props) => {
         href={link.href}
         className="flex h-full gap-4 rounded bg-slate-700 p-4 hover:bg-slate-600"
       >
-        <span className="flex-none">
+        <span className="flex-none bg-slate-500 rounded flex items-center justify-center w-16 h-16">
           {/* TODO: Show proper fallback image */}
           <img
             src={imgSrc}
-            width={64}
-            height={64}
+            width={32}
+            height={32}
             alt={`Logo of ${link.title}`}
           />
           {/* <Avatar name={link.title} /> */}
         </span>
 
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden">
           <p className="font-bold">{link.title}</p>
           <p className="leading-tight mt-2">{link.description}</p>
           <p

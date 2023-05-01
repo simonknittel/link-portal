@@ -59,8 +59,9 @@ This project has been setup with the [T3 App](https://create.t3.gg/) stack initi
 
 ### Playwright tests
 
-- Start up the database: `docker compose up`
-- Run the tests: `cd playwright/ && npx playwright test --debug`
+1. Start up the database: `docker compose up`
+2. Install dependencies: `cd playwright && npm ci`
+3. Run the tests: `npx playwright test --debug`
 
 ## License
 

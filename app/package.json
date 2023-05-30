@@ -18,7 +18,7 @@
     "@vercel/analytics": "^1.0.0",
     "clsx": "^1.2.1",
     "form-data": "^4.0.0",
-    "mailgun.js": "^8.2.1",
+    "mailgun.js": "^9.0.0",
     "next": "^13.3.3",
     "next-auth": "^4.22.1",
     "pusher": "^5.1.2",

@@ -51,15 +51,17 @@ This project has been setup with the [T3 App](https://create.t3.gg/) stack initi
 
 1. Configure environment variables: Duplicate `app/.env.example` to `app/.env` and fill in the blanks.
 2. Install required Node.js version: `nvm use`
-3. Start up the database: `docker compose up`
-4. Update the database's schema: `npx prisma db push`
-5. Run the app: `cd app/ && npm run dev`
-6. Access the app at: <http://localhost:3000>
+3. Install dependencies: `cd app && npm ci`
+4. Start up the database: `cd .. && docker compose up`
+5. Update the database's schema: `cd app && npx prisma db push`
+6. Run the app: `npm run dev`
+7. Access the app at: <http://localhost:3000>
 
 ### Playwright tests
 
-- Start up the database: `docker compose up`
-- Run the tests: `cd playwright/ && npx playwright test --debug`
+1. Start up the database: `docker compose up`
+2. Install dependencies: `cd playwright && npm ci`
+3. Run the tests: `npx playwright test --debug`
 
 ## License
 

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3.5.0
+      - uses: actions/checkout@v3.5.3
 
       - uses: actions/setup-node@v3.6.0
         with:
@@ -54,7 +54,7 @@ jobs:
           NEXTAUTH_SECRET: 1234567890abcdefghijklmnopqrstuv
         working-directory: playwright
 
-      - uses: actions/upload-artifact@v3.1.2
+      - uses: actions/upload-artifact@v3.1.3
         if: always()
         with:
           name: playwright-report
